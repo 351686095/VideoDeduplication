@@ -52,8 +52,7 @@ def scene_features_exist(files, pipeline: PipelineContext):
     return not any(missing_scene_features(files, pipeline))
 
 
-def frame_to_global(files, pipeline: PipelineContext, progress=ProgressMonitor.NULL):
-    """Calculate and save video-level feature vectors based on frame-level representation."""
+def get_scene_durations(pipeline: PipelineContext):
     config = pipeline.config
     scene_metadata_path = os.path.join(config.repr.directory, "scene_metadata.csv")
     try:
@@ -62,9 +61,15 @@ def frame_to_global(files, pipeline: PipelineContext, progress=ProgressMonitor.N
         scene_durations = []
         for _, row in scene_metadata.iterrows():
             scene_durations += [[row["video_filename"], row["scene_duration_seconds"]]]
+        return scene_durations
     except Exception:
-        logger.exception("Error loading scene metadata, file '%s' not found" % scene_metadata_path)
-        return
+        raise Exception("Error loading scene metadata, file '%s' not found" % scene_metadata_path)
+
+
+def frame_to_global(files, pipeline: PipelineContext, progress=ProgressMonitor.NULL):
+    """Calculate and save video-level feature vectors based on frame-level representation."""
+    scene_durations = get_scene_durations(pipeline)
+    config = pipeline.config
     # Seconds per frame
     spf = config.proc.frame_sampling
     progress.scale(len(files))
@@ -73,9 +78,11 @@ def frame_to_global(files, pipeline: PipelineContext, progress=ProgressMonitor.N
             frame_features = pipeline.repr_storage.frame_level.read(key)
 
             scenes_dur = None
-            for filename, durs in scene_durations:
+            for i in range(len(scene_durations)):
+                filename, durs = scene_durations[i]
                 if filename in key.path:
                     scenes_dur = [int(d) for d in durs.strip("][").split(", ")]
+                    scene_durations = scene_durations[:i] + scene_durations[i+1:]
                     break
             if scenes_dur is None:
                 raise Exception("Error: no scene metadata available for file '%s'" % key.path)
@@ -89,7 +96,7 @@ def frame_to_global(files, pipeline: PipelineContext, progress=ProgressMonitor.N
 
             pipeline.repr_storage.scene_level.write(key, scene_representations)
         except Exception:
-            logger.exception("Error computing video-level features for file: %s", key)
+            logger.exception("Error computing scene-level features for file: %s", key)
         finally:
             progress.increase(1)
     progress.complete()

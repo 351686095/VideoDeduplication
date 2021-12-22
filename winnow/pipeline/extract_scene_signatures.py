@@ -1,6 +1,5 @@
 import logging
 from typing import Collection, Dict
-from copy import deepcopy
 
 from winnow.feature_extraction import SimilarityModel
 from winnow.pipeline.extract_scene_level_features import scene_features_exist, extract_scene_level_features
