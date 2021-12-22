@@ -82,7 +82,7 @@ def frame_to_global(files, pipeline: PipelineContext, progress=ProgressMonitor.N
                 filename, durs = scene_durations[i]
                 if filename in key.path:
                     scenes_dur = [int(d) for d in durs.strip("][").split(", ")]
-                    scene_durations = scene_durations[:i] + scene_durations[i+1:]
+                    scene_durations = scene_durations[:i] + scene_durations[i + 1 :]
                     break
             if scenes_dur is None:
                 raise Exception("Error: no scene metadata available for file '%s'" % key.path)
