@@ -1,9 +1,11 @@
 """The files module offers high-level operations with file-system."""
 import hashlib
 import os
+from functools import lru_cache
 from glob import glob
 from pathlib import Path
-from functools import lru_cache
+
+from winnow.config.config import HashMode
 
 
 def read_chunks(file_object, buffer_size=64 * 1024):
@@ -14,13 +16,32 @@ def read_chunks(file_object, buffer_size=64 * 1024):
         chunk = file_object.read(buffer_size)
 
 
-@lru_cache(maxsize=None)
-def get_hash(file_path, buffer_size=64 * 1024):
+def get_hash(file_path, mode=HashMode.FILE, buffer_size=64 * 1024) -> str:
     """Get sha256 hash of the file."""
+    if mode == HashMode.FILE:
+        return hash_file(file_path, buffer_size)
+    elif mode == HashMode.PATH:
+        return hash_str(file_path)
+    else:
+        hash_modes = [e.value for e in HashMode]
+        hash_modes_str = '", "'.join(hash_modes)
+        print('Error: mode "%s" is invalid. mode must be one of ("%s").' % (str(mode), hash_modes_str))
+
+
+@lru_cache(maxsize=None)
+def hash_file(file_path: str, buffer_size=64 * 1024) -> str:
+    """Get sha256 hash of the specified file."""
     sha256 = hashlib.sha256()
     with open(file_path, "rb") as file:
         for data in read_chunks(file, buffer_size):
             sha256.update(data)
+    return sha256.hexdigest()
+
+
+def hash_str(data: str, encoding="utf-8") -> str:
+    """Hash given string."""
+    sha256 = hashlib.sha256()
+    sha256.update(data.encode(encoding))
     return sha256.hexdigest()
 
 

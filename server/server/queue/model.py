@@ -1,9 +1,8 @@
+from dataclasses import dataclass, asdict
 from datetime import datetime
 from enum import Enum
 from numbers import Number
 from typing import List, Optional, Dict, Union
-
-from dataclasses import dataclass, asdict
 
 from server.queue import time_utils
 
@@ -38,7 +37,7 @@ class TaskError:
 
 
 class TaskStatus(Enum):
-    """Enum for """
+    """Enum for task status."""
 
     PENDING = "PENDING"
     RUNNING = "RUNNING"
@@ -117,7 +116,7 @@ class FindFrame(Request):
     """Find frame matches in the given directory."""
 
     file_id: int
-    frame_time_sec: int
+    frame_time_millis: int
     directory: str = "."
     template_distance: Optional[float] = None
     template_distance_min: Optional[float] = None

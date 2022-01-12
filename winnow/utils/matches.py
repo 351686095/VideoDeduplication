@@ -17,13 +17,13 @@ def filter_results(threshold, distances, indices):
     return results, results_distances
 
 
-def get_summarized_matches(video_signatures, distance=0.75, metric="cosine"):
+def get_summarized_matches(video_signatures, new_signatures=[], distance=0.75, metric="cosine"):
 
     neighbors = min(20, video_signatures.shape[0])
     nn = AnnoyNNeighbors(n_neighbors=neighbors, metric=metric)
     nn.fit(video_signatures)
 
-    distances, indices = nn.kneighbors(video_signatures)
+    distances, indices = nn.kneighbors(new_signatures)
     results, results_distances = filter_results(distance, distances, indices)
 
     ss = sorted(zip(results, results_distances), key=lambda x: len(x[0]), reverse=True)
