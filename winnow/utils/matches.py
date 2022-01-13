@@ -18,6 +18,9 @@ def filter_results(threshold, distances, indices):
 
 
 def get_summarized_matches(video_signatures, new_signatures=[], distance=0.75, metric="cosine"):
+    if len(new_signatures) == 0:
+        print("Skipping matching: no new signatures.")
+        return None
 
     neighbors = min(20, video_signatures.shape[0])
     nn = AnnoyNNeighbors(n_neighbors=neighbors, metric=metric)

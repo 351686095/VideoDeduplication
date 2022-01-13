@@ -60,26 +60,29 @@ def main(source, output, metric, metric_threshold, matched_videos):
     if len(video_signatures.shape) > 2:
         video_signatures = np.array([x[0] for x in video_signatures])
 
-    print("LEN_VID_SIGS", len(video_signatures))
-    print("LEN_NEW_SIGS", len(new_signatures))
-
     match_df = get_summarized_matches(
         video_signatures, new_signatures=new_signatures, distance=float(metric_threshold), metric=metric
     )
 
-    match_df["query_video"] = original_filename[match_df["query"]]
-    match_df["match_video"] = original_filename[match_df["match"]]
-    match_df["query_video_original_path"] = video_signatures_fp[match_df["query"]]
-    match_df["match_video_original_path"] = video_signatures_fp[match_df["match"]]
-    match_df["self_match"] = match_df["query_video"] == match_df["match_video"]
-    match_df = match_df.loc[~match_df["self_match"], :]
-    match_df["unique_index"] = match_df.apply(unique, axis=1)
-    match_df = match_df.drop_duplicates(subset=["unique_index"])
+    if match_df is None:
+        print("No new matches to save.")
+    else:
+        match_df["query_video"] = original_filename[match_df["query"]]
+        match_df["match_video"] = original_filename[match_df["match"]]
+        match_df["query_video_original_path"] = video_signatures_fp[match_df["query"]]
+        match_df["match_video_original_path"] = video_signatures_fp[match_df["match"]]
+        match_df["self_match"] = match_df["query_video"] == match_df["match_video"]
+        match_df = match_df.loc[~match_df["self_match"], :]
+        match_df["unique_index"] = match_df.apply(unique, axis=1)
+        match_df = match_df.drop_duplicates(subset=["unique_index"])
 
-    output_path = os.path.join(output, "matches_simple_gen.csv")
-    match_df.to_csv(output_path, mode="a", header=(len(matched_videos_np) == 0))
-    print(f"Matches file save at:{output_path}")
-    print(f"Number of matches saved:{len(match_df)}")
+        output_path = os.path.join(output, "matches_simple_gen.csv")
+        if len(matched_videos_np) == 0:
+            match_df.to_csv(output_path)
+        else:
+            match_df.to_csv(output_path, mode="a", header=False)
+        print(f"Matches file save at:{output_path}")
+        print(f"Number of matches saved:{len(match_df)}")
 
 
 if __name__ == "__main__":

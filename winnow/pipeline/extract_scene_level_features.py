@@ -81,22 +81,26 @@ def frame_to_global(files, pipeline: PipelineContext, progress=ProgressMonitor.N
             for i in range(len(scene_durations)):
                 filename, durs = scene_durations[i]
                 if filename in key.path:
-                    scenes_dur = [int(d) for d in durs.strip("][").split(", ")]
+                    scenes_dur = [int(d) for d in durs.strip("][").split(", ") if len(d) > 0]
                     scene_durations = scene_durations[:i] + scene_durations[i + 1 :]
                     break
             if scenes_dur is None:
-                raise Exception("Error: no scene metadata available for file '%s'" % key.path)
+                raise Exception("No scene metadata available for file '%s'" % key.path)
 
-            scene_features = []
-            for dur in scenes_dur:
-                scene_frames = dur // spf
-                scene_features += [frame_features[:scene_frames]]
+            if len(scenes_dur) == 0:
+                scene_features = [frame_features]
+            else:
+                scene_features = []
+                for dur in scenes_dur:
+                    scene_frames = dur // spf
+                    scene_features += [frame_features[:scene_frames]]
+                    frame_features = frame_features[scene_frames:]
 
             scene_representations = np.concatenate([global_vector(sf) for sf in scene_features])
 
             pipeline.repr_storage.scene_level.write(key, scene_representations)
-        except Exception:
-            logger.exception("Error computing scene-level features for file: %s", key)
+        except Exception as e:
+            logger.exception("Error computing scene-level features for file: %s (%s)", key, str(e))
         finally:
             progress.increase(1)
     progress.complete()
