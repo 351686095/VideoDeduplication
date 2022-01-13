@@ -176,7 +176,7 @@ def extract_scenes(
 
     progress_bar = tqdm(frame_level_iterator, mininterval=1.0, unit="files", desc="Performing scene detection:")
 
-    for path, file_hash, frame_level_features in frame_level_iterator:
+    for path, file_hash, frame_level_features in progress_bar:
         # if frame_level_features.shape[0] > minimum_duration:
         raw_scenes.append(cosine_series(frame_level_features))
         paths.append(path)
