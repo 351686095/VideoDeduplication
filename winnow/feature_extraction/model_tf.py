@@ -120,8 +120,8 @@ class CNN_tf:
 
         init = self.load_model(model_ckpt)
         config = tf.compat.v1.ConfigProto()
-        # config.gpu_options.per_process_gpu_memory_fraction = 0.90
-        # config.gpu_options.allow_growth = True
+        #config.gpu_options.per_process_gpu_memory_fraction = 0.95
+        config.gpu_options.allow_growth = True
         self.sess = tf.compat.v1.Session(config=config)
         self.sess.run(init)
 
