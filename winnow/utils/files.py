@@ -4,6 +4,7 @@ import os
 from functools import lru_cache
 from glob import glob
 from pathlib import Path
+from tqdm import tqdm
 
 from winnow.config.config import HashMode
 
@@ -48,7 +49,7 @@ def hash_str(data: str, encoding="utf-8") -> str:
 def filter_extensions(files, extensions):
     """Filter files by extensions."""
     extensions = {f".{ext}".lower() for ext in extensions}
-    return [x for x in files if Path(x).suffix.lower() in extensions]
+    return [x for x in tqdm(files, unit="files", desc="Filtering non-video files:") if Path(x).suffix.lower() in extensions]
 
 
 def scan_videos(path, wildcard, extensions=()):
@@ -66,7 +67,7 @@ def scan_videos(path, wildcard, extensions=()):
         List[String]: A list of file paths
     """
     files = glob(os.path.join(path, wildcard), recursive=True)
-    files = [x for x in files if os.path.isfile(x)]
+    files = [x for x in tqdm(files, unit="files", desc="Enumerating files:") if os.path.isfile(x)]
     if len(extensions) > 0:
         files = filter_extensions(files, extensions)
 
