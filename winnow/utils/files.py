@@ -49,7 +49,9 @@ def hash_str(data: str, encoding="utf-8") -> str:
 def filter_extensions(files, extensions):
     """Filter files by extensions."""
     extensions = {f".{ext}".lower() for ext in extensions}
-    return [x for x in tqdm(files, unit="files", desc="Filtering non-video files:") if Path(x).suffix.lower() in extensions]
+    return [
+        x for x in tqdm(files, unit="files", desc="Filtering non-video files:") if Path(x).suffix.lower() in extensions
+    ]
 
 
 def scan_videos(path, wildcard, extensions=()):

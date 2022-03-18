@@ -76,7 +76,7 @@ class DNN(object):
             self.test_op = [summary, cost, error]
 
         config = tf.compat.v1.ConfigProto()
-        #config.gpu_options.per_process_gpu_memory_fraction = 0.95
+        # config.gpu_options.per_process_gpu_memory_fraction = 0.95
         config.gpu_options.allow_growth = True
         init = tf.compat.v1.global_variables_initializer()
         self.sess = tf.compat.v1.Session(config=config)
