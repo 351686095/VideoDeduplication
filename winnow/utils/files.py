@@ -5,6 +5,7 @@ from functools import lru_cache
 from glob import glob
 from pathlib import Path
 from tqdm import tqdm
+from multiprocessing import Pool, cpu_count
 
 from winnow.config.config import HashMode
 
@@ -54,6 +55,10 @@ def filter_extensions(files, extensions):
     ]
 
 
+def isfile(x):
+    return x, os.path.isfile(x)
+
+
 def scan_videos(path, wildcard, extensions=()):
     """Scans a directory for a given wildcard
 
@@ -69,10 +74,10 @@ def scan_videos(path, wildcard, extensions=()):
         List[String]: A list of file paths
     """
     files = glob(os.path.join(path, wildcard), recursive=True)
-    files = [x for x in tqdm(files, unit="files", desc="Enumerating files:") if os.path.isfile(x)]
+    with Pool(processes=cpu_count()) as pool:
+        files = [x for x, isf in tqdm(pool.imap_unordered(isfile, files), unit="files", desc="Enumerating files:") if isf]
     if len(extensions) > 0:
         files = filter_extensions(files, extensions)
-
     return files
 
 
