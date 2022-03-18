@@ -8,6 +8,8 @@ sources:
     - avi
     - flv
     - mkv
+    - mov
+    - moov
 
 repr:
   directory: data/representations
