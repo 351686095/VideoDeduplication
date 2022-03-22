@@ -75,7 +75,13 @@ def scan_videos(path, wildcard, extensions=()):
     """
     files = glob(os.path.join(path, wildcard), recursive=True)
     with Pool(processes=cpu_count()) as pool:
-        files = [x for x, isf in tqdm(pool.imap_unordered(isfile, files), total=len(files), unit="files", desc="Enumerating files") if isf]
+        files = [
+            x
+            for x, isf in tqdm(
+                pool.imap_unordered(isfile, files), total=len(files), unit="files", desc="Enumerating files"
+            )
+            if isf
+        ]
     if len(extensions) > 0:
         files = filter_extensions(files, extensions)
     return files
