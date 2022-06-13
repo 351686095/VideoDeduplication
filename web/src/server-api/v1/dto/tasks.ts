@@ -1,3 +1,5 @@
+import { RawEmbeddingAlgorithm } from "./embeddings";
+
 export type TaskErrorDTO = {
   exc_type: string;
   exc_message: string;
@@ -19,6 +21,11 @@ export enum RawTaskType {
   MatchTemplates = "MatchTemplates",
   FindFrame = "FindFrame",
   ProcessOnlineVideo = "ProcessOnlineVideo",
+  PushFingerprints = "PushFingerprints",
+  PullFingerprints = "PullFingerprints",
+  MatchRemoteFingerprints = "MatchRemoteFingerprints",
+  PrepareSemanticSearch = "PrepareSemanticSearch",
+  GenerateTiles = "GenerateTiles",
 }
 
 export type TypedRequestDTO = {
@@ -98,12 +105,75 @@ export function isProcessOnlineVideoRequestDTO(
   return data.type === RawTaskType.ProcessOnlineVideo;
 }
 
+export type PushFingerprintsRequestDTO = {
+  type: RawTaskType.PushFingerprints;
+  repository_id: number;
+};
+
+export function isPushFingerprintsRequestDTO(
+  data: TypedRequestDTO
+): data is PushFingerprintsRequestDTO {
+  return data.type === RawTaskType.PushFingerprints;
+}
+
+export type PullFingerprintsRequestDTO = {
+  type: RawTaskType.PullFingerprints;
+  repository_id: number;
+};
+
+export function isPullFingerprintsRequestDTO(
+  data: TypedRequestDTO
+): data is PullFingerprintsRequestDTO {
+  return data.type === RawTaskType.PullFingerprints;
+}
+
+export type MatchRemoteFingerprintsRequestDTO = {
+  type: RawTaskType.MatchRemoteFingerprints;
+  repository_id?: number | null;
+  contributor_name?: string | null;
+};
+
+export function isMatchRemoteFingerprintsRequestDTO(
+  data: TypedRequestDTO
+): data is MatchRemoteFingerprintsRequestDTO {
+  return data.type === RawTaskType.MatchRemoteFingerprints;
+}
+
+export type PrepareSemanticSearchRequestDTO = {
+  type: RawTaskType.PrepareSemanticSearch;
+  force: boolean;
+};
+
+export function isPrepareSemanticSearchRequestDTO(
+  data: TypedRequestDTO
+): data is PrepareSemanticSearchRequestDTO {
+  return data.type === RawTaskType.PrepareSemanticSearch;
+}
+
+export type GenerateTilesRequestDTO = {
+  type: RawTaskType.GenerateTiles;
+  algorithm: RawEmbeddingAlgorithm;
+  max_zoom: number;
+  force: boolean;
+};
+
+export function isGenerateTilesRequestDTO(
+  data: TypedRequestDTO
+): data is GenerateTilesRequestDTO {
+  return data.type === RawTaskType.GenerateTiles;
+}
+
 export type TaskRequestDTO =
   | ProcessDirectoryRequestDTO
   | ProcessFileListRequestDTO
   | MatchTemplatesRequestDTO
   | FindFrameRequestDTO
-  | ProcessOnlineVideoRequestDTO;
+  | ProcessOnlineVideoRequestDTO
+  | PushFingerprintsRequestDTO
+  | PullFingerprintsRequestDTO
+  | MatchRemoteFingerprintsRequestDTO
+  | PrepareSemanticSearchRequestDTO
+  | GenerateTilesRequestDTO;
 
 export type FileCountDTO = {
   template: number;
@@ -126,13 +196,23 @@ export type ProcessFileListResultDTO = undefined;
 export type MatchTemplatesResultDTO = { file_counts: FileCountDTO[] };
 export type FindFrameResultDTO = { matches: FoundFrameDTO[] };
 export type ProcessOnlineVideoResultDTO = { files: ProcessedFileDTO[] };
+export type PushFingerprintsResultDTO = undefined;
+export type PullFingerprintsResultDTO = undefined;
+export type MatchRemoteFingerprintsResultDTO = undefined;
+export type PrepareSemanticSearchResultDTO = undefined;
+export type GenerateTilesResultDTO = undefined;
 
 export type TaskResultDTO =
   | ProcessDirectoryResultDTO
   | ProcessFileListResultDTO
   | MatchTemplatesResultDTO
   | FindFrameResultDTO
-  | ProcessOnlineVideoResultDTO;
+  | ProcessOnlineVideoResultDTO
+  | PushFingerprintsResultDTO
+  | PullFingerprintsResultDTO
+  | MatchRemoteFingerprintsResultDTO
+  | PrepareSemanticSearchResultDTO
+  | GenerateTilesResultDTO;
 
 export type TaskDTO = {
   id: string;

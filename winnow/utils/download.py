@@ -3,11 +3,11 @@ import os
 import sys
 from contextlib import contextmanager
 from pathlib import Path
-from typing import Iterable, List
+from typing import List, Collection
 
-import youtube_dl
+import yt_dlp
 from tqdm import tqdm
-from youtube_dl.utils import YoutubeDLError
+from yt_dlp.utils import YoutubeDLError
 
 from winnow.pipeline.progress_monitor import ProgressMonitor, BaseProgressMonitor
 
@@ -105,17 +105,30 @@ class YDLProgressTracker:
             self._started = False
 
 
+def download_path(
+    video_url: str,
+    output_template: str,
+    output_directory: str,
+) -> str:
+    """Get target path of the file to be downloaded without actually downloading it."""
+    resolved_template = _complete_template(output_directory, output_template)
+    ydl_options = {"format": "mp4", "outtmpl": resolved_template}
+    with yt_dlp.YoutubeDL(ydl_options) as ydl:
+        video_info = ydl.extract_info(video_url, download=False)
+        return ydl.prepare_filename(video_info)
+
+
 def download_video(
     video_url: str,
     output_template: str,
-    root_directory: str,
+    output_directory: str,
     progress=ProgressMonitor.NULL,
     logger: logging.Logger = _logger,
 ) -> str:
     """Download a single video from by URL."""
 
     # Resolve output template
-    output_template = _complete_template(root_directory, output_template)
+    output_template = _complete_template(output_directory, output_template)
     logger.info("Starting video download URL=%s destination=%s", video_url, output_template)
 
     # Setup progress-tracking
@@ -127,9 +140,10 @@ def download_video(
         "logger": YDLLogger(logger),
         "progress_hooks": [progress_tracker.hook],
         "outtmpl": output_template,
+        "retries": 10,
     }
 
-    with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         # Determine destination file name
         video_info = ydl.extract_info(video_url, download=False)
         file_name = ydl.prepare_filename(video_info)
@@ -144,7 +158,7 @@ def download_video(
 
 
 def download_videos(
-    urls: Iterable[str],
+    urls: Collection[str],
     output_template: str,
     root_directory: str,
     progress=ProgressMonitor.NULL,
@@ -162,7 +176,7 @@ def download_videos(
             file_path = download_video(
                 video_url,
                 output_template=output_template,
-                root_directory=root_directory,
+                output_directory=root_directory,
                 progress=subtask,
                 logger=logger,
             )

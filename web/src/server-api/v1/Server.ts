@@ -11,6 +11,13 @@ import TemplateMatchesEndpoint from "./endpoints/TemplateMatchesEndpoint";
 import TemplateExclusionsEndpoint from "./endpoints/TemplateExclusionsEndpoint";
 import TasksEndpoint from "./endpoints/TasksEndpoint";
 import Socket from "./Socket";
+import RepositoryEndpoint from "./endpoints/RepositoryEndpoint";
+import ContributorsEndpoint from "./endpoints/ContributorsEndpoint";
+import { makeServerError } from "../ServerError";
+import { OnlineDTO } from "./dto/online";
+import { ServerHealthStatus } from "../../model/health";
+import { HealthDTO } from "./dto/health";
+import EmbeddingsEndpoint from "./endpoints/EmbeddingsEndpoint";
 
 type RestServerOptions = {
   baseURL?: string;
@@ -30,8 +37,11 @@ export default class Server implements ServerAPI {
   readonly templateMatches: TemplateMatchesEndpoint;
   readonly templateExclusions: TemplateExclusionsEndpoint;
   readonly tasks: TasksEndpoint;
+  readonly repositories: RepositoryEndpoint;
+  readonly contributors: ContributorsEndpoint;
   readonly stats: StatsEndpoint;
   readonly socket: Socket;
+  readonly embeddings: EmbeddingsEndpoint;
 
   constructor(options: RestServerOptions = {}) {
     this.baseURL = options.baseURL || "/api/v1";
@@ -52,7 +62,30 @@ export default class Server implements ServerAPI {
     this.templateMatches = new TemplateMatchesEndpoint(this.axios);
     this.templateExclusions = new TemplateExclusionsEndpoint(this.axios);
     this.tasks = new TasksEndpoint(this.axios);
+    this.repositories = new RepositoryEndpoint(this.axios);
+    this.contributors = new ContributorsEndpoint(this.axios);
     this.stats = new StatsEndpoint(this.axios);
+    this.embeddings = new EmbeddingsEndpoint(this.axios);
     this.socket = new Socket();
+  }
+
+  async isOnline(): Promise<boolean> {
+    try {
+      const response = await this.axios.get<OnlineDTO>("/online");
+      return response.data.online;
+    } catch (error) {
+      throw makeServerError("Fetch online status error.", error);
+    }
+  }
+
+  async getHealth(): Promise<ServerHealthStatus> {
+    try {
+      const response = await this.axios.get<HealthDTO>("/health");
+      return {
+        semanticSearch: response.data.semantic_search,
+      };
+    } catch (error) {
+      throw makeServerError("Fetch health status error.", error);
+    }
   }
 }
