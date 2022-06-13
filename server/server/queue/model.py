@@ -1,10 +1,11 @@
-from dataclasses import dataclass, asdict
 from datetime import datetime
 from enum import Enum
 from numbers import Number
 from typing import List, Optional, Dict, Union
 
-from server.queue import time_utils
+from dataclasses import dataclass, asdict
+
+from server import time_utils
 
 # Type hint for json-serializable data.
 JsonData = Union[List, Dict, Number, bool, str]
@@ -142,6 +143,44 @@ class ProcessOnlineVideo(Request):
     extensions: Optional[List[str]] = None
     match_distance: Optional[float] = None
     min_duration: Optional[Number] = None
+
+
+@dataclass
+class PushFingerprints(Request):
+    """Push fingerprints to remote repository."""
+
+    repository_id: int
+
+
+@dataclass
+class PullFingerprints(Request):
+    """Pull fingerprints from remote repository."""
+
+    repository_id: int
+
+
+@dataclass
+class MatchRemoteFingerprints(Request):
+    """Match local and remote fingerprints."""
+
+    repository_id: Optional[int] = None
+    contributor_name: Optional[str] = None
+
+
+@dataclass
+class PrepareSemanticSearch(Request):
+    """Generate indexes required for semantic search."""
+
+    force: bool = True
+
+
+@dataclass
+class GenerateTiles(Request):
+    """Generate interactive map tiles with embeddings."""
+
+    algorithm: str
+    max_zoom: int = 8
+    force: bool = False
 
 
 @dataclass

@@ -6,6 +6,8 @@ import FindFrameRequestOverview from "./task-types/FindFrameRequestOverview";
 import ProcessOnlineVideoRequestAttrs from "./task-types/ProcessOnlineVideoRequestAttrs";
 import { TaskRequestType } from "../../../model/Task";
 import { RequestViewMap } from "./model";
+import PrepareSemanticSearchRequestAttrs from "./task-types/PrepareSemanticSearchRequestAttrs";
+import GenerateTilesRequestAttrs from "./task-types/GenerateTilesRequestAttrs";
 
 export const RequestViews: RequestViewMap = {
   [TaskRequestType.DIRECTORY]: [
@@ -52,6 +54,44 @@ export const RequestViews: RequestViewMap = {
     {
       title: "view.attributes",
       component: ProcessOnlineVideoRequestAttrs,
+    },
+    {
+      title: "view.raw",
+      component: RawRequest,
+    },
+  ],
+  [TaskRequestType.PUSH_FINGERPRINTS]: [
+    {
+      title: "view.raw",
+      component: RawRequest,
+    },
+  ],
+  [TaskRequestType.PULL_FINGERPRINTS]: [
+    {
+      title: "view.raw",
+      component: RawRequest,
+    },
+  ],
+  [TaskRequestType.MATCH_REMOTE_FINGERPRINTS]: [
+    {
+      title: "view.raw",
+      component: RawRequest,
+    },
+  ],
+  [TaskRequestType.PREPARE_SEMANTIC_SEARCH]: [
+    {
+      title: "view.attributes",
+      component: PrepareSemanticSearchRequestAttrs,
+    },
+    {
+      title: "view.raw",
+      component: RawRequest,
+    },
+  ],
+  [TaskRequestType.GENERATE_TILES]: [
+    {
+      title: "view.attributes",
+      component: GenerateTilesRequestAttrs,
     },
     {
       title: "view.raw",
