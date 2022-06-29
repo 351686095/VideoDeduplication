@@ -50,7 +50,7 @@ def main(source, output, metric, metric_threshold, matched_videos):
         matched_videos_np = []
         print("No previously matched videos found.")
 
-    video_signatures = np.array([np.load(x) for x in video_signatures_fp])
+    video_signatures = np.array([np.load(x)[0] for x in video_signatures_fp])
     new_signatures = np.array(
         [video_signatures[i] for i in range(video_signatures.shape[0]) if original_filename[i] not in matched_videos_np]
     )

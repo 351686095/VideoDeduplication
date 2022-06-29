@@ -64,7 +64,6 @@ def feature_extraction_videos(
     logger.info("Starting Feature Extraction Process")
     logger.info("GPU is available: %s", tf.test.is_gpu_available())
 
-    pool = mp.Pool(cores)
     tasks = zip(
         video_paths,
         video_ids,
@@ -72,13 +71,28 @@ def feature_extraction_videos(
         repeat(frame_sampling, file_count),
         repeat(batch_sz, file_count),
     )
+    # Chunk tasks into as close as possible to 10,000 chunks, but with chunksize bounded [1, 10] (inclusive)
+    chunksize = max(min(len(video_paths) // 10000, 10), 1)
 
     progress_bar = iter(tqdm(range(file_count), mininterval=1.0, unit="video"))
-    for video_id, frame_tensor in pool.imap_unordered(process_video, tasks, chunksize=1):
-        logger.info("Extracting features for %s", video_id)
-        frame_features = model.extract(frame_tensor, batch_sz)
-        on_extracted(video_id, frame_tensor, frame_features)
-        next(progress_bar)
+    semaphore = mp.Semaphore(100)
+
+    # Semaphore pattern used below from https://stackoverflow.com/questions/30448267/multiprocessing-pool-imap-unordered-with-fixed-queue-size-or-buffer
+    with mp.Pool(cores) as pool:
+        for video_id, frame_tensor in pool.imap_unordered(process_video, semaphore_producer(semaphore, tasks), chunksize=chunksize):
+            logger.info("Extracting features for %s", video_id)
+            frame_features = model.extract(frame_tensor, batch_sz)
+            on_extracted(video_id, frame_tensor, frame_features)
+            next(progress_bar)
+            semaphore.release()
+
+
+def semaphore_producer(semaphore: mp.Semaphore, tasks: Collection[tuple]):
+    for task in tasks:
+        # Reduce Semaphore by 1 or wait if 0
+        semaphore.acquire()
+        # Now deliver an item to the caller (pool)
+        yield task
 
 
 def load_featurizer(pretrained_local_path) -> CNN_tf:

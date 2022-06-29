@@ -61,7 +61,7 @@ class ScenesReportTask(PipelineTask):
         coll = self.pipeline.coll
 
         return FileWithTimestampTarget(
-            path_prefix=os.path.join(self.output_directory, "scenes", self.prefix, "scenes"),
+            path_prefix=os.path.join(self.output_directory, "scenes"),
             name_suffix=".csv",
             need_updates=lambda time: coll.any(prefix=self.prefix, min_mtime=time),
         )
@@ -96,8 +96,9 @@ class ScenesReportTask(PipelineTask):
             self.logger.info("Merged with %s existing detection results", len(old_scenes_df))
 
         self.logger.info("Saving detected scenes to %s", target_path)
+        self.logger.info("Saving detected scenes to %s", luigi.LocalTarget(target_path).path)
 
-        
+
         scenes_df.to_csv(luigi.LocalTarget(target_path).path)
 
         if latest_path is not None and self.clean_existing:

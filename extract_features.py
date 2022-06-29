@@ -7,9 +7,7 @@ import luigi
 from winnow.pipeline.luigi.scenes import ScenesTask
 from winnow.pipeline.luigi.signatures import (
     SignaturesTask,
-    DBSignaturesTask,
     SignaturesByPathListFileTask,
-    DBSignaturesByPathListFileTask,
 )
 from winnow.utils.config import resolve_config
 
@@ -47,8 +45,8 @@ def main(config, list_of_files, frame_sampling, save_frames):
         luigi.build(
             [
                 SignaturesTask(config=config),
-                DBSignaturesTask(config=config),
-                ScenesTask(config=config),
+                #DBSignaturesTask(config=config),
+                #ScenesTask(config=config),
             ],
             local_scheduler=True,
             workers=1,
@@ -57,7 +55,7 @@ def main(config, list_of_files, frame_sampling, save_frames):
         luigi.build(
             [
                 SignaturesByPathListFileTask(config=config, path_list_file=list_of_files),
-                DBSignaturesByPathListFileTask(config=config, path_list_file=list_of_files),
+                #DBSignaturesByPathListFileTask(config=config, path_list_file=list_of_files),
             ],
             local_scheduler=True,
             workers=1,

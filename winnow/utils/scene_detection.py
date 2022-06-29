@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from dataclasses import dataclass
 from scipy.spatial.distance import cosine
+from tqdm import tqdm
 
 from winnow.pipeline.progress_monitor import BaseProgressMonitor, ProgressMonitor
 from winnow.storage.base_repr_storage import BaseReprStorage
@@ -135,7 +136,7 @@ def frame_iterator(keys, repr_storage: BaseReprStorage):
 def extract_scenes(
     file_keys: Sequence[FileKey],
     frame_features_storage: BaseReprStorage,
-    minimum_duration: int = 10,
+    minimum_duration: int = 0,
     upper_thresh: float = 0.793878,
     min_dif: float = 0.04,
     min_scene_duration: int = 2,
@@ -178,6 +179,8 @@ def extract_scenes(
     video_scenes = []
     for sid in scene_ident:
         idxs = np.array(list(range(len(sid))))[sid]
+        if 0 not in idxs:
+            idxs = [0] + list(idxs)
         scenes = []
         for z, i in enumerate(idxs):
             start = i

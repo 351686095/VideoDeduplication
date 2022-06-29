@@ -16,6 +16,7 @@ from winnow.pipeline.luigi.targets import (
     PathListFileFeatureTarget,
 )
 from winnow.pipeline.luigi.utils import KeyIter
+from winnow.pipeline.luigi.scene_features import SceneFeaturesTask
 from winnow.pipeline.luigi.video_features import (
     VideoFeaturesTask,
     VideoFeaturesByPathListFileTask,
@@ -33,7 +34,11 @@ class SignaturesTask(PipelineTask):
     prefix: str = luigi.Parameter(default=".")
 
     def requires(self):
-        return VideoFeaturesTask(
+        yield VideoFeaturesTask(
+            config=self.config,
+            prefix=self.prefix,
+        )
+        yield SceneFeaturesTask(
             config=self.config,
             prefix=self.prefix,
         )
@@ -54,6 +59,12 @@ class SignaturesTask(PipelineTask):
         )
 
         extract_signatures(
+            file_keys=target.remaining_keys,
+            pipeline=self.pipeline,
+            progress=self.progress,
+            logger=self.logger,
+        )
+        extract_scene_signatures(
             file_keys=target.remaining_keys,
             pipeline=self.pipeline,
             progress=self.progress,
@@ -161,6 +172,40 @@ def extract_signatures(
 
     logger.info("Saving fingerprints.")
     bulk_write(pipeline.repr_storage.signature, signatures)
+
+    logger.info("Done signature extraction.")
+    progress.complete()
+
+
+def extract_scene_signatures(
+    file_keys: Collection[FileKey],
+    pipeline: PipelineContext,
+    progress: BaseProgressMonitor = ProgressMonitor.NULL,
+    logger: logging.Logger = logging.getLogger(__name__),
+):
+    """Calculate and save signatures for the given files to repr-storage
+    assuming the corresponding scene-level features are already available.
+    """
+
+    # Skip step if required results already exist
+    if not file_keys:
+        logger.info("Representation storage contains all required signatures. Skipping...")
+        progress.complete()
+        return
+
+    # Do calculate signatures
+    logger.info("Reading similarity model.")
+    similarity_model = SimilarityModel()
+
+    logger.info("Reading scene-level features.")
+    scene_features = bulk_read(pipeline.repr_storage.scene_level, select=file_keys)
+    logger.info("Loaded %s scene-level features", len(scene_features))
+
+    logger.info("Calculating fingerprints from scene-level features.")
+    signatures = similarity_model.predict(scene_features)
+
+    logger.info("Saving fingerprints.")
+    bulk_write(pipeline.repr_storage.scene_signature, signatures)
 
     logger.info("Done signature extraction.")
     progress.complete()
