@@ -5,8 +5,8 @@ from pathlib import Path
 from typing import List, Tuple, Union, IO, AnyStr, Dict, Collection, Iterator, Iterable
 
 import numpy as np
-# import pandas as pd
-import cudf as pd
+import pandas as pd
+# import cudf as pd
 from dataclasses import astuple
 
 from winnow.collection.file_collection import FileCollection

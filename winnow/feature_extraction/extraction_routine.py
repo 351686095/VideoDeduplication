@@ -75,7 +75,7 @@ def feature_extraction_videos(
     chunksize = max(min(len(video_paths) // 10000, 10), 1)
 
     progress_bar = iter(tqdm(range(file_count), mininterval=1.0, unit="video"))
-    semaphore = mp.Semaphore(100)
+    semaphore = mp.Semaphore(cores)
 
     # Semaphore pattern used below from https://stackoverflow.com/questions/30448267/multiprocessing-pool-imap-unordered-with-fixed-queue-size-or-buffer
     with mp.Pool(cores) as pool:
