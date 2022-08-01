@@ -22,9 +22,9 @@ def process_video(task: Tuple[str, Any, Any, int, int]) -> Tuple[Any, np.ndarray
     """
     logger = logging.getLogger(f"{__name__}.process_video")
     video_path, video_id, image_size, frame_sampling, batch_sz = task
-    logger.info("Preparing frames for %s", video_path)
+    logger.debug("Preparing frames for %s", video_path)
     frames_tensor = load_video(video_path, image_size, frame_sampling)
-    logger.info("Done preparing frames for %s", video_path)
+    logger.debug("Done preparing frames for %s", video_path)
     return video_id, frames_tensor
 
 

@@ -173,7 +173,7 @@ def extract_scenes(
             raw_scenes.append(cosine_series(frame_level_features))
             paths.append(path)
             hashes.append(file_hash)
-        progress.increase(1)
+        #progress.increase(1)
 
     scene_ident = [((diffs > np.quantile(diffs, upper_thresh)) & (diffs > min_dif)) for diffs in raw_scenes]
 
