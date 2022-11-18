@@ -7,7 +7,7 @@ import pandas as pd
 from dataclasses import asdict, replace
 from tqdm import tqdm
 
-from winnow.duplicate_detection.neighbors import  DetectedMatch
+from winnow.duplicate_detection.neighbors import DetectedMatch
 from winnow.duplicate_detection.neighbors_rapids import NeighborMatcher
 from winnow.pipeline.extract_video_level_features import video_features_exist, extract_video_level_features
 from winnow.pipeline.extract_video_signatures import video_signatures_exist, extract_video_signatures

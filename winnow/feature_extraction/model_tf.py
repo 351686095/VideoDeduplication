@@ -35,6 +35,7 @@ with warnings.catch_warnings():
     import tensorflow as tf
     import tf_slim as slim
     from tensorflow.python.framework.ops import disable_eager_execution
+
     disable_eager_execution()
 
     tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
@@ -99,9 +100,7 @@ class CNN_tf:
         else:
             raise ValueError("Supported networks: vgg, resnet, inception")
 
-        self.input = tf.keras.Input(
-            dtype=tf.uint8, shape=(self.desired_size, self.desired_size, 3), name="input"
-        )
+        self.input = tf.keras.Input(dtype=tf.uint8, shape=(self.desired_size, self.desired_size, 3), name="input")
         vid_processed = preprocess(self.input)
 
         # create the CNN network
@@ -114,7 +113,9 @@ class CNN_tf:
         # 3. normalize feature vector
         net = [
             tf.nn.l2_normalize(
-                tf.reduce_max(input_tensor=tf.nn.l2_normalize(tf.nn.relu(net[lay]), 3, epsilon=1e-15), axis=(1, 2)), 1, epsilon=1e-15
+                tf.reduce_max(input_tensor=tf.nn.l2_normalize(tf.nn.relu(net[lay]), 3, epsilon=1e-15), axis=(1, 2)),
+                1,
+                epsilon=1e-15,
             )
             for lay in self.layers
         ]

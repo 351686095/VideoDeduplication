@@ -28,10 +28,44 @@ from winnow.storage.file_key import FileKey
 from winnow.storage.repr_utils import bulk_read, bulk_write
 
 
+class ScenelessSignaturesTask(PipelineTask):
+    """Extract fingerprints for files with prefix."""
+
+    prefix: str = luigi.Parameter(default="audio")
+
+    def requires(self):
+        yield VideoFeaturesTask(
+            config=self.config,
+            prefix=self.prefix,
+        )
+
+    def output(self) -> PrefixFeatureTarget:
+        return PrefixFeatureTarget(
+            prefix=self.prefix,
+            coll=self.pipeline.coll,
+            reprs=self.pipeline.repr_storage.signature,
+        )
+
+    def run(self):
+        target = self.output()
+        self.logger.info(
+            "Starting fingerprint extraction for %s file with prefix '%s'",
+            len(target.remaining_keys),
+            self.prefix,
+        )
+
+        extract_signatures(
+            file_keys=target.remaining_keys,
+            pipeline=self.pipeline,
+            progress=self.progress,
+            logger=self.logger,
+        )
+
+
 class SignaturesTask(PipelineTask):
     """Extract fingerprints for files with prefix."""
 
-    prefix: str = luigi.Parameter(default=".")
+    prefix: str = luigi.Parameter(default="video")
 
     def requires(self):
         yield VideoFeaturesTask(

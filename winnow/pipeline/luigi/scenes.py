@@ -98,7 +98,6 @@ class ScenesReportTask(PipelineTask):
         self.logger.info("Saving detected scenes to %s", target_path)
         self.logger.info("Saving detected scenes to %s", luigi.LocalTarget(target_path).path)
 
-
         scenes_df.to_csv(luigi.LocalTarget(target_path).path)
 
         if latest_path is not None and self.clean_existing:

@@ -6,10 +6,11 @@ import pandas as pd
 from glob import glob
 
 from winnow.feature_extraction.loading_utils import global_vector
-#from winnow.pipeline.extract_frame_level_features import (
+
+# from winnow.pipeline.extract_frame_level_features import (
 #    extract_frame_level_features,
 #    frame_features_exist,
-#)
+# )
 from winnow.pipeline.pipeline_context import PipelineContext
 from winnow.pipeline.progress_monitor import ProgressMonitor
 
@@ -17,19 +18,16 @@ from winnow.pipeline.progress_monitor import ProgressMonitor
 logger = logging.getLogger(__name__)
 
 
-def extract_scene_level_features(
-    files: Collection[str],
-    pipeline: PipelineContext,
-    progress=ProgressMonitor.NULL):
+def extract_scene_level_features(files: Collection[str], pipeline: PipelineContext, progress=ProgressMonitor.NULL):
     """Extract scene-level features from the dataset videos."""
 
     files = tuple(files)
     remaining_video_paths = [*missing_scene_features(files, pipeline)]
 
     # Ensure dependencies are satisfied
-    #if not frame_features_exist(remaining_video_paths, pipeline):
-        #extract_frame_level_features(remaining_video_paths, pipeline, progress=progress.subtask(0.9))
-        #progress = progress.subtask(0.1)
+    # if not frame_features_exist(remaining_video_paths, pipeline):
+    # extract_frame_level_features(remaining_video_paths, pipeline, progress=progress.subtask(0.9))
+    # progress = progress.subtask(0.1)
 
     # Skip step if required results already exist
     if not remaining_video_paths:

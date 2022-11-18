@@ -7,6 +7,7 @@ import luigi
 from winnow.pipeline.luigi.scenes import ScenesTask
 from winnow.pipeline.luigi.signatures import (
     SignaturesTask,
+    ScenelessSignaturesTask,
     SignaturesByPathListFileTask,
 )
 from winnow.utils.config import resolve_config
@@ -14,12 +15,6 @@ from winnow.utils.config import resolve_config
 
 @click.command()
 @click.option("--config", "-cp", help="path to the project config file", default=os.environ.get("WINNOW_CONFIG"))
-@click.option(
-    "--list-of-files",
-    "-lof",
-    help="path to txt with a list of files for processing - overrides source folder from the config file",
-    default=None,
-)
 @click.option(
     "--frame-sampling",
     "-fs",
@@ -37,29 +32,26 @@ from winnow.utils.config import resolve_config
     default=None,
     is_flag=True,
 )
-def main(config, list_of_files, frame_sampling, save_frames):
+@click.option(
+    "--skip_scenes",
+    "-ss",
+    help="Whether to process scenes.",
+    default=None,
+    is_flag=True,
+)
+def main(config, frame_sampling, save_frames, skip_scenes):
     config = resolve_config(config_path=config, frame_sampling=frame_sampling, save_frames=save_frames)
-    logging.config.fileConfig("./logging.conf")
 
-    if list_of_files is None:
-        luigi.build(
-            [
-                SignaturesTask(config=config),
-                #DBSignaturesTask(config=config),
-                #ScenesTask(config=config),
-            ],
-            local_scheduler=True,
-            workers=1,
-        )
-    else:
-        luigi.build(
-            [
-                SignaturesByPathListFileTask(config=config, path_list_file=list_of_files),
-                #DBSignaturesByPathListFileTask(config=config, path_list_file=list_of_files),
-            ],
-            local_scheduler=True,
-            workers=1,
-        )
+    logging.config.fileConfig("./logging.conf")
+    sig_task = ScenelessSignaturesTask if skip_scenes else SignaturesTask
+
+    luigi.build(
+        [
+            sig_task(config=config),
+        ],
+        local_scheduler=True,
+        workers=1,
+    )
 
 
 if __name__ == "__main__":

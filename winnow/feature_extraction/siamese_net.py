@@ -116,9 +116,7 @@ class DNN(object):
         Function that loads the weight of DNN layers from the saved model.
         """
         previous_sizes = [
-            size[1]
-            for name, size in tf.train.list_variables(self.path)
-            if len(size) == 2 and "Adam" not in name
+            size[1] for name, size in tf.train.list_variables(self.path) if len(size) == 2 and "Adam" not in name
         ]
         net = self.build(previous_sizes)
 

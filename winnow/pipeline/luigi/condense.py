@@ -261,7 +261,7 @@ class CondenseFingerprintsTask(PipelineTask):
             self.logger.info("Merged previous results with new fingerprints.")
 
         self.logger.info("Writing %s fingerprints to %s", len(condensed), target.suggest_paths(new_results_time))
-        
+
         target.write(condensed, new_results_time)
 
         if self.clean_existing and previous_results_paths is not None:

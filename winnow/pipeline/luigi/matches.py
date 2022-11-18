@@ -351,7 +351,7 @@ class MatchesReportTask(PipelineTask):
 
     def save_matches_csv(self, matches_df: pd.DataFrame):
         """Save matches to csv file."""
-        
+
         dst = self.output().path
         parent = os.path.split(dst)[0]
         if not os.path.exists(parent):

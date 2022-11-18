@@ -79,8 +79,10 @@ def feature_extraction_videos(
 
     # Semaphore pattern used below from https://stackoverflow.com/questions/30448267/multiprocessing-pool-imap-unordered-with-fixed-queue-size-or-buffer
     with mp.Pool(cores) as pool:
-        for video_id, frame_tensor in pool.imap_unordered(process_video, semaphore_producer(semaphore, tasks), chunksize=chunksize):
-            logger.info("Extracting features for %s", video_id)
+        for video_id, frame_tensor in pool.imap_unordered(
+            process_video, semaphore_producer(semaphore, tasks), chunksize=chunksize
+        ):
+            logger.debug("Extracting features for %s", video_id)
             frame_features = model.extract(frame_tensor, batch_sz)
             on_extracted(video_id, frame_tensor, frame_features)
             next(progress_bar)

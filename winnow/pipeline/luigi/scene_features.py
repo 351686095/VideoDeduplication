@@ -31,10 +31,7 @@ class SceneFeaturesTask(PipelineTask):
             config=self.config,
             prefix=self.prefix,
         )
-        yield ScenesReportTask(
-            config=self.config,
-            prefix=self.prefix
-        )
+        yield ScenesReportTask(config=self.config, prefix=self.prefix)
 
     def output(self) -> PrefixFeatureTarget:
         return PrefixFeatureTarget(

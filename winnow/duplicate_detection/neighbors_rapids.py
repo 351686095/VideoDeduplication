@@ -95,7 +95,7 @@ class NeighborMatcher:
     def model(self) -> RapidsMatcher:
         if self._model is None:
             # neighbors = min(self._max_matches, len(self._haystack))
-            nearest_neighbors = RapidsMatcher( metric=self._metric)
+            nearest_neighbors = RapidsMatcher(metric=self._metric)
             nearest_neighbors.fit([vector.features for vector in self._haystack])
             self._model = nearest_neighbors
         return self._model
@@ -147,8 +147,7 @@ class NeighborMatcher:
     def _filter_results(distances: np.ndarray, indices: np.ndarray, threshold: float):
         results_indices = []
         results_distances = []
-        
-        
+
         for i, row in enumerate(distances):
 
             msk = row < threshold

@@ -4,6 +4,7 @@ from typing import Collection
 
 import luigi
 import numpy as np
+import tensorflow as tf
 
 from winnow.feature_extraction import IntermediateCnnExtractor
 from winnow.pipeline.luigi.targets import PrefixFeatureTarget, PathListFileFeatureTarget, PathListFeatureTarget
@@ -32,6 +33,8 @@ class FrameFeaturesTask(PipelineTask):
             len(target.remaining_keys),
             self.prefix,
         )
+
+        tf.compat.v1.reset_default_graph()
 
         extract_frame_level_features(
             file_keys=target.remaining_keys,
