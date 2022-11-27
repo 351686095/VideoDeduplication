@@ -29,8 +29,8 @@ def process_video(task: Tuple[str, Any, Any, int, int]) -> Tuple[Any, np.ndarray
 
 
 # Type hint for a function tha will be called when a particular
-# file is processed: callback(path_or_id, frames, frame_features)
-OnExtractedCallback = Callable[[Any, np.ndarray, np.ndarray], Any]
+# file is processed: callback(path_or_id, frame_features)
+OnExtractedCallback = Callable[[Any, np.ndarray], Any]
 
 
 def feature_extraction_videos(
@@ -75,7 +75,10 @@ def feature_extraction_videos(
     chunksize = max(min(len(video_paths) // 10000, 10), 1)
 
     progress_bar = iter(tqdm(range(file_count), mininterval=1.0, unit="video"))
-    semaphore = mp.Semaphore(cores)
+    semaphore_count = int(cores * 1.25)
+    semaphore = mp.Semaphore(semaphore_count)
+
+    callbacks = []
 
     # Semaphore pattern used below from https://stackoverflow.com/questions/30448267/multiprocessing-pool-imap-unordered-with-fixed-queue-size-or-buffer
     with mp.Pool(cores) as pool:
@@ -84,9 +87,15 @@ def feature_extraction_videos(
         ):
             logger.debug("Extracting features for %s", video_id)
             frame_features = model.extract(frame_tensor, batch_sz)
-            on_extracted(video_id, frame_tensor, frame_features)
-            next(progress_bar)
-            semaphore.release()
+            callbacks += [pool.apply_async(on_extracted, (video_id, frame_features))]
+            first_pass = True
+            while first_pass or (len(callbacks) == semaphore_count):
+                first_pass = False
+                finished_callbacks = [c for c in callbacks if c.ready()]
+                callbacks = [c for c in callbacks if not c.ready()]
+                for callback in finished_callbacks:
+                    next(progress_bar)
+                    semaphore.release()
 
 
 def semaphore_producer(semaphore: mp.Semaphore, tasks: Collection[tuple]):
