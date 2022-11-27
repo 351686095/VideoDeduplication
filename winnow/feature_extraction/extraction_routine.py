@@ -29,7 +29,7 @@ def process_video(task: Tuple[str, Any, Any, int, int]) -> Tuple[Any, np.ndarray
 
 
 # Type hint for a function tha will be called when a particular
-# file is processed: callback(path_or_id, frames, frame_features)
+# file is processed: callback(path_or_id, frame_features)
 OnExtractedCallback = Callable[[Any, np.ndarray], Any]
 
 
