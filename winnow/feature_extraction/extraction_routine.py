@@ -30,7 +30,7 @@ def process_video(task: Tuple[str, Any, Any, int, int]) -> Tuple[Any, np.ndarray
 
 # Type hint for a function tha will be called when a particular
 # file is processed: callback(path_or_id, frames, frame_features)
-OnExtractedCallback = Callable[[Any, np.ndarray, np.ndarray], Any]
+OnExtractedCallback = Callable[[Any, np.ndarray], Any]
 
 
 def feature_extraction_videos(
@@ -84,7 +84,7 @@ def feature_extraction_videos(
         ):
             logger.debug("Extracting features for %s", video_id)
             frame_features = model.extract(frame_tensor, batch_sz)
-            on_extracted(video_id, frame_tensor, frame_features)
+            on_extracted(video_id, frame_features)
             next(progress_bar)
             semaphore.release()
 
