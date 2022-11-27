@@ -17,12 +17,11 @@ logger = logging.getLogger(__name__)
 
 def cosine_series(arr):
     output = [1.0]
-    for i in range(len(arr)):
-        if i < len(arr) - 1:
-            a = arr[i]
-            b = arr[i + 1]
-            dist = cosine(a, b)
-            output.append(dist)
+    for i in range(len(arr) - 1):
+        a = arr[i]
+        b = arr[i + 1]
+        dist = cosine(a, b)
+        output.append(dist)
     return np.array(output)
 
 
