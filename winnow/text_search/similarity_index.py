@@ -9,7 +9,12 @@ import numpy as np
 from annoy import AnnoyIndex
 from sklearn.neighbors import KDTree, BallTree
 
-from winnow.pipeline.progress_monitor import BaseProgressMonitor, ProgressMonitor, LazyProgress, ProgressBar
+from winnow.pipeline.progress_monitor import (
+    BaseProgressMonitor,
+    ProgressMonitor,
+    LazyProgress,
+    ProgressBar,
+)
 from winnow.text_search.evaluation import cosine_sim, l2norm
 from winnow.utils.logging import logger_name
 
@@ -63,7 +68,11 @@ class LinearSimilarityIndex(SimilarityIndex):
     def save(self, directory: str, index_name: str):
         """Save index to the file system."""
         ids_path, vectors_path = self._file_paths(directory, index_name)
-        self._logger.info("Saving LinearSimilarityIndex with %s items to %s", len(self._vectors), vectors_path)
+        self._logger.info(
+            "Saving LinearSimilarityIndex with %s items to %s",
+            len(self._vectors),
+            vectors_path,
+        )
         np.save(ids_path, self._ids)
         np.save(vectors_path, self._vectors)
         self._logger.info("Saved LinearSimilarityIndex with %s items", len(self._vectors))
@@ -184,7 +193,11 @@ class AnnoySimilarityIndex(SimilarityIndex):
         self._ensure_fit()
         if not ids_path.endswith(".npy"):
             raise ValueError(f"ids_path must end with '.npy': {ids_path}")
-        self.logger.info("Saving AnnoySimilarityIndex with %s items to %s", self._annoy_index.get_n_items(), index_path)
+        self.logger.info(
+            "Saving AnnoySimilarityIndex with %s items to %s",
+            self._annoy_index.get_n_items(),
+            index_path,
+        )
         os.makedirs(os.path.dirname(ids_path), exist_ok=True)
         np.save(ids_path, self._ids)
         os.makedirs(os.path.dirname(index_path), exist_ok=True)

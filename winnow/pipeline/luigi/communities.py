@@ -10,10 +10,18 @@ from cached_property import cached_property
 from dataclasses import dataclass
 from typing.io import IO
 
-from winnow.pipeline.luigi.match_graph import MatchGraphTask, MatchGraphTarget, MatchGraph
+from winnow.pipeline.luigi.match_graph import (
+    MatchGraphTask,
+    MatchGraphTarget,
+    MatchGraph,
+)
 from winnow.pipeline.luigi.platform import PipelineTask
 from winnow.pipeline.luigi.utils import FileKeyDF
-from winnow.pipeline.progress_monitor import ProgressMonitor, LazyProgress, BaseProgressMonitor
+from winnow.pipeline.progress_monitor import (
+    ProgressMonitor,
+    LazyProgress,
+    BaseProgressMonitor,
+)
 from winnow.storage.file_key import FileKey
 
 
@@ -128,7 +136,11 @@ class LocalMatchGraphCommunitiesTarget(luigi.Target):
     def exists(self):
         return self.partition_target.exists() and self.file_keys_target.exists()
 
-    def write(self, communities: MatchGraphCommunities, progress: BaseProgressMonitor = ProgressMonitor.NULL):
+    def write(
+        self,
+        communities: MatchGraphCommunities,
+        progress: BaseProgressMonitor = ProgressMonitor.NULL,
+    ):
         """Write MatchGraphCommunities to the local file system."""
         progress.scale(1.0)
 
@@ -171,7 +183,9 @@ class GraphCommunitiesTask(PipelineTask):
         communities = MatchGraphCommunities.detect(matches, progress=self.progress.subtask(0.6))
         modularity = communities.modularity(matches.graph)
         self.logger.info(
-            "Detected %s communities, modularity = %s", communities.partition.numberOfSubsets(), modularity
+            "Detected %s communities, modularity = %s",
+            communities.partition.numberOfSubsets(),
+            modularity,
         )
 
         target = self.output()

@@ -162,7 +162,12 @@ class TemplateLoader:
 
         with tempfile.TemporaryDirectory(prefix="frame-folder-") as directory:
             frame_path = os.path.join(directory, "frame.jpg")
-            extract_frame(source_path=frame.path, destination=frame_path, position=frame.time, width=self._image_size)
+            extract_frame(
+                source_path=frame.path,
+                destination=frame_path,
+                position=frame.time,
+                width=self._image_size,
+            )
             resized_images = np.array([load_image(frame_path, self._image_size)])
             features = self._pretrained_model.extract(resized_images, batch_sz=10)
 

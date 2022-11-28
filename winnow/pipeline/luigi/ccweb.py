@@ -6,7 +6,10 @@ import luigi
 import numpy as np
 import pandas as pd
 
-from winnow.pipeline.luigi.condense import CondensedFingerprintsTarget, CondensedFingerprints
+from winnow.pipeline.luigi.condense import (
+    CondensedFingerprintsTarget,
+    CondensedFingerprints,
+)
 from winnow.pipeline.luigi.embeddings import (
     EmbeddingsTask,
     UmapEmbeddingsTask,
@@ -107,7 +110,11 @@ class CCWebImageTask(LabeledEmbeddingsImageTask):
     def draw_figure(self, embeddings: np.ndarray, colors: np.ndarray, color_labels: List[str]):
         n_categories = 20
         top_categories = colors < n_categories
-        super().draw_figure(embeddings[top_categories], colors[top_categories], color_labels[:n_categories])
+        super().draw_figure(
+            embeddings[top_categories],
+            colors[top_categories],
+            color_labels[:n_categories],
+        )
 
 
 class CCWebUmapImageTask(CCWebImageTask):

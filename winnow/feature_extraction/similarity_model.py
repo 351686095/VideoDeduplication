@@ -50,7 +50,13 @@ class SimilarityModel:
         # Create model
         if self.model is None:
             logger.info("Creating similarity model for shape %s", features.shape)
-            self.model = DNN(features.shape[1], None, similarity_model_pretrained, load_model=True, trainable=False)
+            self.model = DNN(
+                features.shape[1],
+                None,
+                similarity_model_pretrained,
+                load_model=True,
+                trainable=False,
+            )
 
         embeddings = self.model.embeddings(features)
         embeddings = np.nan_to_num(embeddings)

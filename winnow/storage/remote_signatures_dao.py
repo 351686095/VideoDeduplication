@@ -58,7 +58,11 @@ class RemoteSignaturesDAO(abc.ABC):
         """Get single remote fingerprint."""
 
     @abc.abstractmethod
-    def count(self, repository_name: Optional[str] = None, contributor_name: Optional[str] = None) -> int:
+    def count(
+        self,
+        repository_name: Optional[str] = None,
+        contributor_name: Optional[str] = None,
+    ) -> int:
         """Count remote signatures."""
 
     @abc.abstractmethod
@@ -81,7 +85,11 @@ class RemoteMatchesDAO(abc.ABC):
     """Remote matches storage API."""
 
     @abc.abstractmethod
-    def save_matches(self, report: RemoteMatchesReport, progress: BaseProgressMonitor = ProgressMonitor.NULL):
+    def save_matches(
+        self,
+        report: RemoteMatchesReport,
+        progress: BaseProgressMonitor = ProgressMonitor.NULL,
+    ):
         """Save multiple DetectedMatches where needle is a remote signature key, haystack is a local file key."""
         pass
 
@@ -147,7 +155,11 @@ class DBRemoteSignaturesDAO(RemoteSignaturesDAO):
                 return None
             return self._remote_fingerprint(file)
 
-    def count(self, repository_name: Optional[str] = None, contributor_name: Optional[str] = None) -> int:
+    def count(
+        self,
+        repository_name: Optional[str] = None,
+        contributor_name: Optional[str] = None,
+    ) -> int:
         """Count remote signatures."""
         with self._database.session_scope() as session:
             return FilesDAO.query_remote_files(
@@ -216,7 +228,11 @@ class DBRemoteMatchesDAO(RemoteMatchesDAO):
     def __init__(self, database: Database):
         self._database: Database = database
 
-    def save_matches(self, report: RemoteMatchesReport, progress: BaseProgressMonitor = ProgressMonitor.NULL):
+    def save_matches(
+        self,
+        report: RemoteMatchesReport,
+        progress: BaseProgressMonitor = ProgressMonitor.NULL,
+    ):
         """Save multiple DetectedMatches where needle is a remote signature key, haystack is a local file key."""
         saving = progress.bar(0.9, scale=len(report.matches), unit="matches")
         for matches in chunks(report.matches, size=10000):
@@ -229,7 +245,10 @@ class DBRemoteMatchesDAO(RemoteMatchesDAO):
                 existing_matches = self._get_existing_matches(session, id_pairs)
 
                 for detected_match in matches:
-                    remote_id, local_id = remote_ids[detected_match.remote.id], local_ids[detected_match.local]
+                    remote_id, local_id = (
+                        remote_ids[detected_match.remote.id],
+                        local_ids[detected_match.local],
+                    )
                     match_entity = existing_matches.get((remote_id, local_id))
                     if match_entity is None:
                         match_entity = Matches(query_video_file_id=remote_id, match_video_file_id=local_id)
@@ -370,7 +389,11 @@ class ReprRemoteSignaturesDAO(RemoteSignaturesDAO):
             contributor=contributor_name,
         )
 
-    def count(self, repository_name: Optional[str] = None, contributor_name: Optional[str] = None) -> int:
+    def count(
+        self,
+        repository_name: Optional[str] = None,
+        contributor_name: Optional[str] = None,
+    ) -> int:
         """Count remote signatures."""
         total_count = 0
         for repo in self._repos(repository_name):
@@ -439,7 +462,11 @@ class RemoteMatchesReportDAO(RemoteMatchesDAO):
         self._loader = DataLoader(data_class=_ReportDetails)
         os.makedirs(self._directory, exist_ok=True)
 
-    def save_matches(self, report: RemoteMatchesReport, progress: BaseProgressMonitor = ProgressMonitor.NULL):
+    def save_matches(
+        self,
+        report: RemoteMatchesReport,
+        progress: BaseProgressMonitor = ProgressMonitor.NULL,
+    ):
         """Save multiple DetectedMatches where needle is a remote signature key, haystack is a local file key."""
         report_df = self._make_df(report, progress.subtask(0.9))
         csv_path, details_path = self._paths(report)
@@ -480,7 +507,10 @@ class RemoteMatchesReportDAO(RemoteMatchesDAO):
         )
 
     @staticmethod
-    def _make_df(report: RemoteMatchesReport, progress: BaseProgressMonitor = ProgressMonitor.NULL) -> pd.DataFrame:
+    def _make_df(
+        report: RemoteMatchesReport,
+        progress: BaseProgressMonitor = ProgressMonitor.NULL,
+    ) -> pd.DataFrame:
         progress.scale(len(report.matches))
         entries = []
         for match in report.matches:

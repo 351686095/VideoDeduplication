@@ -3,7 +3,10 @@ import os
 import luigi
 from annoy import AnnoyIndex
 
-from winnow.pipeline.luigi.condense import CondenseFingerprintsTask, CondensedFingerprints
+from winnow.pipeline.luigi.condense import (
+    CondenseFingerprintsTask,
+    CondensedFingerprints,
+)
 from winnow.pipeline.luigi.platform import PipelineTask
 from winnow.pipeline.luigi.targets import FileGroupTarget
 

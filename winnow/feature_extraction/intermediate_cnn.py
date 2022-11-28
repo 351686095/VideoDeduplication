@@ -1,6 +1,10 @@
 from typing import Collection, Any, Optional
 
-from .extraction_routine import feature_extraction_videos, load_featurizer, OnExtractedCallback
+from .extraction_routine import (
+    feature_extraction_videos,
+    load_featurizer,
+    OnExtractedCallback,
+)
 from .model import default_model_path
 from .model_tf import CNN_tf
 from ..utils.multiproc import multiprocessing as mp

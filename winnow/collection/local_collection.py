@@ -6,7 +6,13 @@ from typing import Iterator, Collection, Union, Optional
 
 from winnow.collection.file_collection import FileCollection
 from winnow.storage.file_key import FileKey
-from winnow.utils.files import extension_filter, iter_files, mtime_filter, FileHashFunc, is_parent
+from winnow.utils.files import (
+    extension_filter,
+    iter_files,
+    mtime_filter,
+    FileHashFunc,
+    is_parent,
+)
 
 
 class LocalFileCollection(FileCollection):

@@ -29,14 +29,26 @@ from .txt2vec import get_txt2vec
 
 def parse_args():
     parser = argparse.ArgumentParser("W2VVPP training script.")
-    parser.add_argument("--rootpath", type=str, default=ROOT_PATH, help="path to datasets. (default: %s)" % ROOT_PATH)
+    parser.add_argument(
+        "--rootpath",
+        type=str,
+        default=ROOT_PATH,
+        help="path to datasets. (default: %s)" % ROOT_PATH,
+    )
     parser.add_argument("trainCollection", type=str, help="train collection")
     parser.add_argument("valCollection", type=str, help="validation collection")
     parser.add_argument(
-        "--overwrite", type=int, default=0, choices=[0, 1], help="overwrite existed vocabulary file. (default: 0)"
+        "--overwrite",
+        type=int,
+        default=0,
+        choices=[0, 1],
+        help="overwrite existed vocabulary file. (default: 0)",
     )
     parser.add_argument(
-        "--val_set", type=str, default="", help="validation collection set (setA, setB). (default: setA)"
+        "--val_set",
+        type=str,
+        default="",
+        help="validation collection set (setA, setB). (default: setA)",
     )
     parser.add_argument(
         "--metric",
@@ -49,7 +61,10 @@ def parse_args():
     parser.add_argument("--batch_size", default=128, type=int, help="Size of a training mini-batch.")
     parser.add_argument("--workers", default=2, type=int, help="Number of data loader workers.")
     parser.add_argument(
-        "--model_prefix", default="runs_0", type=str, help="Path to save the model and Tensorboard log."
+        "--model_prefix",
+        default="runs_0",
+        type=str,
+        help="Path to save the model and Tensorboard log.",
     )
     parser.add_argument(
         "--config_name",
@@ -79,7 +94,13 @@ def main():
     config = load_config("winnow.text_search.configs.%s" % opt.config_name)
 
     model_path = os.path.join(
-        rootpath, train_collection, "w2vvpp_train", val_collection, val_set, opt.config_name, opt.model_prefix
+        rootpath,
+        train_collection,
+        "w2vvpp_train",
+        val_collection,
+        val_set,
+        opt.config_name,
+        opt.model_prefix,
     )
     if util.checkToSkip(os.path.join(model_path, "model_best.pth.tar"), opt.overwrite):
         sys.exit(0)
@@ -90,13 +111,19 @@ def main():
 
     collections = {"train": train_collection, "val": val_collection}
 
-    capfiles = {"train": "%s.caption.txt", "val": os.path.join(val_set, "%s.caption.txt")}
+    capfiles = {
+        "train": "%s.caption.txt",
+        "val": os.path.join(val_set, "%s.caption.txt"),
+    }
     cap_file_paths = {
         x: os.path.join(rootpath, collections[x], "TextData", capfiles[x] % collections[x]) for x in collections
     }
     hijack = 500
     vis_feat_files = {
-        x: BigFile(os.path.join(rootpath, collections[x], "FeatureData", config.vid_feat), hijack=hijack)
+        x: BigFile(
+            os.path.join(rootpath, collections[x], "FeatureData", config.vid_feat),
+            hijack=hijack,
+        )
         for x in collections
     }
     config.vis_fc_layers = map(int, config.vis_fc_layers.split("-"))
@@ -107,7 +134,11 @@ def main():
     rnn_encoding, config.pooling = rnn_encoding.split("_", 1)
 
     bow_vocab_file = os.path.join(
-        rootpath, train_collection, "TextData", "vocab", "%s_%d.pkl" % (bow_encoding, config.threshold)
+        rootpath,
+        train_collection,
+        "TextData",
+        "vocab",
+        "%s_%d.pkl" % (bow_encoding, config.threshold),
     )
     config.t2v_bow = get_txt2vec(bow_encoding)(bow_vocab_file, norm=config.bow_norm)
 
@@ -115,7 +146,11 @@ def main():
     config.t2v_w2v = get_txt2vec(w2v_encoding)(w2v_data_path)
 
     rnn_vocab_file = os.path.join(
-        rootpath, train_collection, "TextData", "vocab", "%s_%d.pkl" % (rnn_encoding, config.threshold)
+        rootpath,
+        train_collection,
+        "TextData",
+        "vocab",
+        "%s_%d.pkl" % (rnn_encoding, config.threshold),
     )
     config.t2v_idx = get_txt2vec("idxvec")(rnn_vocab_file)
     if config.we_dim == 500:
@@ -170,7 +205,13 @@ def main():
         is_best = cur_perf > best_perf
         best_perf = max(cur_perf, best_perf)
         save_checkpoint(
-            {"epoch": epoch + 1, "model": model.state_dict(), "best_perf": best_perf, "config": config, "opt": opt},
+            {
+                "epoch": epoch + 1,
+                "model": model.state_dict(),
+                "best_perf": best_perf,
+                "config": config,
+                "opt": opt,
+            },
             is_best,
             logdir=model_path,
             only_best=True,
@@ -209,7 +250,12 @@ def train(model, train_loader, epoch):
         loss = model.train(vis_input, txt_input)
 
         progbar.add(
-            vis_input.size(0), values=[("data_time", data_time.val), ("batch_time", batch_time.val), ("loss", loss)]
+            vis_input.size(0),
+            values=[
+                ("data_time", data_time.val),
+                ("batch_time", batch_time.val),
+                ("loss", loss),
+            ],
         )
 
         # measure elapsed time

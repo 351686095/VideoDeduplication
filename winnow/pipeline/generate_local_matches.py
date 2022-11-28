@@ -9,11 +9,20 @@ from tqdm import tqdm
 
 from winnow.duplicate_detection.neighbors import DetectedMatch
 from winnow.duplicate_detection.neighbors_rapids import NeighborMatcher
-from winnow.pipeline.extract_video_level_features import video_features_exist, extract_video_level_features
-from winnow.pipeline.extract_video_signatures import video_signatures_exist, extract_video_signatures
+from winnow.pipeline.extract_video_level_features import (
+    video_features_exist,
+    extract_video_level_features,
+)
+from winnow.pipeline.extract_video_signatures import (
+    video_signatures_exist,
+    extract_video_signatures,
+)
 from winnow.pipeline.pipeline_context import PipelineContext
 from winnow.pipeline.progress_monitor import ProgressMonitor
-from winnow.pipeline.store_database_signatures import database_signatures_exist, store_database_signatures
+from winnow.pipeline.store_database_signatures import (
+    database_signatures_exist,
+    store_database_signatures,
+)
 from winnow.storage.file_key import FileKey
 from winnow.storage.repr_utils import bulk_read
 from winnow.utils.brightness import get_brightness_estimation
@@ -25,7 +34,10 @@ logger = logging.getLogger(__name__)
 
 
 def generate_local_matches(
-    files: Collection[str], pipeline: PipelineContext, hashes=None, progress=ProgressMonitor.NULL
+    files: Collection[str],
+    pipeline: PipelineContext,
+    hashes=None,
+    progress=ProgressMonitor.NULL,
 ):
     """Find matches between video files."""
 
@@ -105,7 +117,11 @@ def generate_local_matches(
 def _metadata(gray_max, threshold) -> Dict:
     """Create metadata dict."""
     video_dark_flag = gray_max < threshold
-    return {"gray_max": gray_max, "video_dark_flag": video_dark_flag, "flagged": video_dark_flag}
+    return {
+        "gray_max": gray_max,
+        "video_dark_flag": video_dark_flag,
+        "flagged": video_dark_flag,
+    }
 
 
 def _reject(detected_matches: Iterable[DetectedMatch], discarded: Set[FileKey]):

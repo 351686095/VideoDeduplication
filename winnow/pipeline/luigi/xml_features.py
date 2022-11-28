@@ -7,7 +7,11 @@ import numpy as np
 import tensorflow as tf
 
 from winnow.feature_extraction import IntermediateCnnExtractor
-from winnow.pipeline.luigi.targets import PrefixFeatureTarget, PathListFileFeatureTarget, PathListFeatureTarget
+from winnow.pipeline.luigi.targets import (
+    PrefixFeatureTarget,
+    PathListFileFeatureTarget,
+    PathListFeatureTarget,
+)
 from winnow.pipeline.luigi.platform import PipelineTask
 from winnow.pipeline.pipeline_context import PipelineContext
 from winnow.pipeline.progress_monitor import ProgressMonitor, BaseProgressMonitor
@@ -15,7 +19,6 @@ from winnow.storage.file_key import FileKey
 from winnow.feature_extraction.loading_utils import global_vector
 
 from winnow.utils.scene_extraction import detect_scenes
-
 
 
 class VideoProcessingTask(PipelineTask):

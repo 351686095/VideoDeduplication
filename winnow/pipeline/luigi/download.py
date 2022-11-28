@@ -89,7 +89,10 @@ class DownloadFilesTask(PipelineTask):
             self.logger.info("Storing files to the user file collection")
             for file_path, coll_path in zip(download_paths, remaining_coll_paths):
                 coll.store(file_path, coll_path, exist_ok=self.override_existing)
-            self.logger.info("Successfully stored %s files to user file collection", len(download_paths))
+            self.logger.info(
+                "Successfully stored %s files to user file collection",
+                len(download_paths),
+            )
 
         if self.config.database.use:
             self.logger.info("Extracting exif.")

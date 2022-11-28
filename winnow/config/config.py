@@ -77,7 +77,12 @@ class SourcesConfig:
         """Read config from environment variables."""
         self.root = os.environ.get("WINNOW_SOURCES_ROOT", self.root)
         if "WINNOW_SOURCES_EXTENSIONS" in os.environ:
-            self.extensions = tuple(map(str.strip, os.environ["WINNOW_SOURCES_EXTENSIONS"].lower().split(",")))
+            self.extensions = tuple(
+                map(
+                    str.strip,
+                    os.environ["WINNOW_SOURCES_EXTENSIONS"].lower().split(","),
+                )
+            )
         self.hash_mode = HashMode.parse(os.environ.get("WINNOW_REPR_HASH_MODE", self.hash_mode))
         self.hash_cache = os.environ.get("WINNOW_SOURCES_HASH_CACHE_PATH", self.hash_cache)
 

@@ -113,7 +113,10 @@ def serialize_keras_object(instance):
     if instance is None:
         return None
     if hasattr(instance, "get_config"):
-        return {"class_name": instance.__class__.__name__, "config": instance.get_config()}
+        return {
+            "class_name": instance.__class__.__name__,
+            "config": instance.get_config(),
+        }
     if hasattr(instance, "__name__"):
         return instance.__name__
     else:
@@ -280,7 +283,10 @@ def has_arg(fn, name, accept_all=False):
                     if param.kind == inspect.Parameter.VAR_KEYWORD:
                         return True
             return False
-        return parameter.kind in (inspect.Parameter.POSITIONAL_OR_KEYWORD, inspect.Parameter.KEYWORD_ONLY)
+        return parameter.kind in (
+            inspect.Parameter.POSITIONAL_OR_KEYWORD,
+            inspect.Parameter.KEYWORD_ONLY,
+        )
 
 
 class Progbar(object):
@@ -330,7 +336,10 @@ class Progbar(object):
         for k, v in values:
             if k not in self.stateful_metrics:
                 if k not in self._values:
-                    self._values[k] = [v * (current - self._seen_so_far), current - self._seen_so_far]
+                    self._values[k] = [
+                        v * (current - self._seen_so_far),
+                        current - self._seen_so_far,
+                    ]
                 else:
                     self._values[k][0] += v * (current - self._seen_so_far)
                     self._values[k][1] += current - self._seen_so_far
@@ -378,7 +387,11 @@ class Progbar(object):
             if self.target is not None and current < self.target:
                 eta = time_per_unit * (self.target - current)
                 if eta > 3600:
-                    eta_format = "%d:%02d:%02d" % (eta // 3600, (eta % 3600) // 60, eta % 60)
+                    eta_format = "%d:%02d:%02d" % (
+                        eta // 3600,
+                        (eta % 3600) // 60,
+                        eta % 60,
+                    )
                 elif eta > 60:
                     eta_format = "%d:%02d" % (eta // 60, eta % 60)
                 else:

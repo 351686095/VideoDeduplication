@@ -8,7 +8,11 @@ import os
 import luigi
 
 from winnow.feature_extraction.loading_utils import global_vector
-from winnow.pipeline.luigi.targets import PathListFeatureTarget, PathListFileFeatureTarget, PrefixFeatureTarget
+from winnow.pipeline.luigi.targets import (
+    PathListFeatureTarget,
+    PathListFileFeatureTarget,
+    PrefixFeatureTarget,
+)
 from winnow.pipeline.luigi.scenes import ScenesReportTask
 from winnow.pipeline.luigi.frame_features import (
     FrameFeaturesByPathListTask,

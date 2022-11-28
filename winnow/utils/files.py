@@ -7,7 +7,18 @@ from glob import glob
 from math import floor
 from os import PathLike, fspath
 from pathlib import Path
-from typing import Collection, Callable, Union, MutableMapping, Iterator, Tuple, Optional, Sequence, List, Dict
+from typing import (
+    Collection,
+    Callable,
+    Union,
+    MutableMapping,
+    Iterator,
+    Tuple,
+    Optional,
+    Sequence,
+    List,
+    Dict,
+)
 
 from winnow.config.config import HashMode
 
@@ -315,7 +326,13 @@ class PathTime:
         return prefix, timestamp, suffix
 
     @staticmethod
-    def stamp(path: str, time: datetime, suffix: str = None, format: str = FORMAT, delim: str = DELIM) -> str:
+    def stamp(
+        path: str,
+        time: datetime,
+        suffix: str = None,
+        format: str = FORMAT,
+        delim: str = DELIM,
+    ) -> str:
         """Add timestamp to the file path."""
         directory = os.path.dirname(path)
         basename = os.path.basename(path)
@@ -362,7 +379,10 @@ class PathTime:
 
     @staticmethod
     def find_groups(
-        common_prefix: str, suffixes: Sequence[str], format: str = FORMAT, delim: str = DELIM
+        common_prefix: str,
+        suffixes: Sequence[str],
+        format: str = FORMAT,
+        delim: str = DELIM,
     ) -> Sequence[Tuple[Sequence[str], datetime]]:
         """List all groups of files with different timestamps."""
         # For each suffix collect all paths for this suffix as dict(time->path)
@@ -390,7 +410,10 @@ class PathTime:
 
     @staticmethod
     def latest_group(
-        common_prefix: str, suffixes: Sequence[str], format: str = FORMAT, delim: str = DELIM
+        common_prefix: str,
+        suffixes: Sequence[str],
+        format: str = FORMAT,
+        delim: str = DELIM,
     ) -> Tuple[Optional[Sequence[str]], Optional[datetime]]:
         """Find the latest group of timestamped files with the same timestamp."""
         latest_paths: Optional[Sequence[str]] = None
@@ -403,7 +426,11 @@ class PathTime:
 
     @staticmethod
     def stamp_group(
-        common_prefix: str, suffixes: Sequence[str], time: datetime, format: str = FORMAT, delim: str = DELIM
+        common_prefix: str,
+        suffixes: Sequence[str],
+        time: datetime,
+        format: str = FORMAT,
+        delim: str = DELIM,
     ) -> Sequence[str]:
         """Timestamp file path group."""
         result = []

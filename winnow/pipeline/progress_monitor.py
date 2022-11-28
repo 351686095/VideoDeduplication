@@ -54,7 +54,11 @@ class BaseProgressMonitor(abc.ABC):
         return self.subtask(work_amount=remaining_work)
 
     def bar(
-        self, amount: float = None, scale: float = 1.0, unit: str = "work", lazy_portion: Optional[float] = None
+        self,
+        amount: float = None,
+        scale: float = 1.0,
+        unit: str = "work",
+        lazy_portion: Optional[float] = None,
     ) -> "BaseProgressMonitor":
         """Create progress bar."""
         if amount is not None:
@@ -171,7 +175,13 @@ class ProgressMonitor(BaseProgressMonitor):
 class ProgressBar(BaseProgressMonitor):
     """Wrapper around a progress-monitor which will display a progress bar on the console."""
 
-    def __init__(self, monitor: BaseProgressMonitor = None, file=sys.stdout, unit: str = "it", **kwargs):
+    def __init__(
+        self,
+        monitor: BaseProgressMonitor = None,
+        file=sys.stdout,
+        unit: str = "it",
+        **kwargs,
+    ):
         self._monitor: BaseProgressMonitor = monitor or ProgressMonitor()
         self._progress_bar: tqdm = tqdm(file=file, total=self._monitor.total, unit=unit, **kwargs)
         self._progress_bar.update(self._monitor.progress * self._monitor.total)

@@ -20,7 +20,7 @@ from winnow.pipeline.luigi.scene_features import SceneFeaturesTask
 from winnow.pipeline.luigi.video_features import (
     VideoFeaturesTask,
     VideoFeaturesByPathListFileTask,
-    VideoFeaturesByPathListTask
+    VideoFeaturesByPathListTask,
 )
 from winnow.pipeline.luigi.xml_features import VideoProcessingTask
 from winnow.pipeline.pipeline_context import PipelineContext

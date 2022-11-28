@@ -61,7 +61,11 @@ class EmbeddingsImageTask(PipelineTask, abc.ABC):
         self.logger.info("Prepared colors for %s fingerprints", len(colors))
         self.progress.increase(0.2)
 
-        self.logger.info("Drawing %s image with %s colored communities", self.algorithm_name, self.n_communities)
+        self.logger.info(
+            "Drawing %s image with %s colored communities",
+            self.algorithm_name,
+            self.n_communities,
+        )
         self.draw_figure(condensed_embeddings.fingerprints, colors)
         self.logger.info("Done drawing %s image", self.algorithm_name)
 
@@ -92,7 +96,10 @@ class EmbeddingsImageTask(PipelineTask, abc.ABC):
         alpha = f"alpha{self.alpha:.2}"
         point = f"p{self.point_size}"
 
-        return os.path.join(self.output_directory, f"{algo}_{dist}_{coms}_{size}_{drop}_{alpha}_{point}.png")
+        return os.path.join(
+            self.output_directory,
+            f"{algo}_{dist}_{coms}_{size}_{drop}_{alpha}_{point}.png",
+        )
 
     def community_colors(self, communities: nk.structures.Partition) -> Dict[int, int]:
         """Get color for each community as community_id->color_id dict."""
@@ -156,8 +163,14 @@ class EmbeddingsImageTask(PipelineTask, abc.ABC):
         if n_ignored_outliers == 0:
             return
         sorted_coordinates = np.sort(embeddings, kind="heapsort", axis=0)
-        axes.set_ylim(sorted_coordinates[n_ignored_outliers][1], sorted_coordinates[-n_ignored_outliers][1])
-        axes.set_xlim(sorted_coordinates[n_ignored_outliers][0], sorted_coordinates[-n_ignored_outliers][0])
+        axes.set_ylim(
+            sorted_coordinates[n_ignored_outliers][1],
+            sorted_coordinates[-n_ignored_outliers][1],
+        )
+        axes.set_xlim(
+            sorted_coordinates[n_ignored_outliers][0],
+            sorted_coordinates[-n_ignored_outliers][0],
+        )
 
     @cached_property
     def figure_title(self) -> str:
@@ -193,7 +206,10 @@ class TopCommunitiesImageTask(EmbeddingsImageTask, ABC):
         alpha = f"alpha{self.alpha:.2}"
         point = f"p{self.point_size}"
 
-        return os.path.join(self.output_directory, f"{algo}_{top}_{dist}_{size}_{drop}_{alpha}_{point}.png")
+        return os.path.join(
+            self.output_directory,
+            f"{algo}_{top}_{dist}_{size}_{drop}_{alpha}_{point}.png",
+        )
 
     @cached_property
     def figure_title(self) -> str:
@@ -243,7 +259,12 @@ class LabeledEmbeddingsImageTask(PipelineTask, abc.ABC):
         )
         figure.savefig(self.output().path, format="png")
 
-    def apply_image_config(self, figure: matplotlib.figure.Figure, embeddings: np.ndarray, color_labels: List[str]):
+    def apply_image_config(
+        self,
+        figure: matplotlib.figure.Figure,
+        embeddings: np.ndarray,
+        color_labels: List[str],
+    ):
         """Apply figure configuration."""
         # Set up general figure attributes
         axes = figure.gca()
@@ -267,8 +288,14 @@ class LabeledEmbeddingsImageTask(PipelineTask, abc.ABC):
         if n_ignored_outliers == 0:
             return
         sorted_coordinates = np.sort(embeddings, kind="heapsort", axis=0)
-        axes.set_ylim(sorted_coordinates[n_ignored_outliers][1], sorted_coordinates[-n_ignored_outliers][1])
-        axes.set_xlim(sorted_coordinates[n_ignored_outliers][0], sorted_coordinates[-n_ignored_outliers][0])
+        axes.set_ylim(
+            sorted_coordinates[n_ignored_outliers][1],
+            sorted_coordinates[-n_ignored_outliers][1],
+        )
+        axes.set_xlim(
+            sorted_coordinates[n_ignored_outliers][0],
+            sorted_coordinates[-n_ignored_outliers][0],
+        )
 
     @abc.abstractmethod
     def read_embeddings(self) -> CondensedFingerprints:

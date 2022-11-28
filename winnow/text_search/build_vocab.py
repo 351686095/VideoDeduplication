@@ -13,7 +13,13 @@ import pickle
 import sys
 from collections import Counter
 
-from .common import ROOT_PATH, TEXT_ENCODINGS, DEFAULT_LANG, DEFAULT_TEXT_ENCODING, MIN_WORD_COUNT
+from .common import (
+    ROOT_PATH,
+    TEXT_ENCODINGS,
+    DEFAULT_LANG,
+    DEFAULT_TEXT_ENCODING,
+    MIN_WORD_COUNT,
+)
 from .textlib import TextTool, Vocabulary
 from .util import checkToSkip, makedirsforfile
 
@@ -92,9 +98,24 @@ def main(argv=None):
 
     parser = OptionParser(usage="""usage: %prog [options] collection""")
 
-    parser.add_option("--overwrite", default=0, type="int", help="overwrite existing file (default: 0)")
-    parser.add_option("--rootpath", default=ROOT_PATH, type="string", help="rootpath (default: %s)" % ROOT_PATH)
-    parser.add_option("--language", default=DEFAULT_LANG, type="string", help="language (default: %s)" % DEFAULT_LANG)
+    parser.add_option(
+        "--overwrite",
+        default=0,
+        type="int",
+        help="overwrite existing file (default: 0)",
+    )
+    parser.add_option(
+        "--rootpath",
+        default=ROOT_PATH,
+        type="string",
+        help="rootpath (default: %s)" % ROOT_PATH,
+    )
+    parser.add_option(
+        "--language",
+        default=DEFAULT_LANG,
+        type="string",
+        help="language (default: %s)" % DEFAULT_LANG,
+    )
     parser.add_option(
         "--encoding",
         default="bow",
@@ -103,7 +124,10 @@ def main(argv=None):
         help="text encoding strategy. Valid choices are %s. (default: %s)" % (TEXT_ENCODINGS, DEFAULT_TEXT_ENCODING),
     )
     parser.add_option(
-        "--threshold", default=5, type="int", help="minimum word occurrence (default: %d)" % MIN_WORD_COUNT
+        "--threshold",
+        default=5,
+        type="int",
+        help="minimum word occurrence (default: %d)" % MIN_WORD_COUNT,
     )
 
     (options, args) = parser.parse_args(argv)

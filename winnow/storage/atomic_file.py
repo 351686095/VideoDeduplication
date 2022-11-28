@@ -22,7 +22,12 @@ def _ensure_directory_exists(directory_path: PathLike):
 
 
 @contextmanager
-def atomic_file_path(destination_path: PathLike, tmp_prefix: str = None, tmp_suffix: str = None, tmp_dir: str = None):
+def atomic_file_path(
+    destination_path: PathLike,
+    tmp_prefix: str = None,
+    tmp_suffix: str = None,
+    tmp_dir: str = None,
+):
     """
     Context manager that creates a temporary file in the local filesystem
     before moving it to the destination path. The context manager yields
@@ -49,7 +54,11 @@ def atomic_file_path(destination_path: PathLike, tmp_prefix: str = None, tmp_suf
 
 @contextmanager
 def atomic_file_open(
-    destination_path: PathLike, mode: str = "w+b", tmp_prefix: str = None, tmp_suffix: str = None, tmp_dir: str = None
+    destination_path: PathLike,
+    mode: str = "w+b",
+    tmp_prefix: str = None,
+    tmp_suffix: str = None,
+    tmp_dir: str = None,
 ):
     """
     Context manager that creates a temporary file in the local filesystem

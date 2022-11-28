@@ -160,7 +160,13 @@ if __name__ == "__main__":
         break
 
     pair_loader = pair_provider(
-        {"vis_feat": vid_feat_dir, "capfile": capfile, "batch_size": 100, "num_workers": 2, "shuffle": True}
+        {
+            "vis_feat": vid_feat_dir,
+            "capfile": capfile,
+            "batch_size": 100,
+            "num_workers": 2,
+            "shuffle": True,
+        }
     )
     for i, (vis_feats, captions, idxs, vis_ids, cap_ids) in enumerate(pair_loader):
         print(i, vis_feats.shape, captions[:10], len(cap_ids))

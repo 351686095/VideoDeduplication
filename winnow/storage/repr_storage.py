@@ -35,7 +35,7 @@ class ReprStorage:
 def save_func(file, value):
     root = ET.Element("root")
     for key, val in value.items():
-        ET.SubElement(root, key, {'data': val})
+        ET.SubElement(root, key, {"data": val})
     tree = ET.ElementTree(root)
     tree.write(file)
 
@@ -45,5 +45,5 @@ def load_func(path):
     root = tree.getroot()
     ret_val = {}
     for child in root:
-        ret_val[child.tag] = child.attrib['data']
+        ret_val[child.tag] = child.attrib["data"]
     return ret_val

@@ -36,7 +36,10 @@ def repr_storage_factory(
             logger.info("Detected simple path-based repr-storage in %s", directory)
             return SimpleReprStorage(directory)
         else:
-            logger.info("Cannot detect storage type in %s. Using default factory instead.", directory)
+            logger.info(
+                "Cannot detect storage type in %s. Using default factory instead.",
+                directory,
+            )
             return default_factory(directory)
 
     if storage_type is StorageType.SIMPLE:

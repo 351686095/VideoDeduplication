@@ -4,7 +4,11 @@ import os
 import luigi
 from cached_property import cached_property
 
-from winnow.pipeline.luigi.condense import CondenseFingerprintsTask, CondensedFingerprintsTarget, CondensedFingerprints
+from winnow.pipeline.luigi.condense import (
+    CondenseFingerprintsTask,
+    CondensedFingerprintsTarget,
+    CondensedFingerprints,
+)
 from winnow.pipeline.luigi.platform import PipelineTask
 from winnow.pipeline.progress_monitor import BaseProgressMonitor, ProgressMonitor
 

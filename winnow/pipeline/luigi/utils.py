@@ -12,7 +12,11 @@ from dataclasses import astuple
 
 from winnow.collection.file_collection import FileCollection
 from winnow.pipeline.luigi.platform import Match
-from winnow.pipeline.progress_monitor import ProgressMonitor, LazyProgress, BaseProgressMonitor
+from winnow.pipeline.progress_monitor import (
+    ProgressMonitor,
+    LazyProgress,
+    BaseProgressMonitor,
+)
 from winnow.storage.file_key import FileKey
 
 
@@ -141,7 +145,13 @@ class MatchesDF:
         def entry(detected_match):
             """Flatten (query_key, match_key, dist) match entry."""
             source, target = detected_match.needle_key, detected_match.haystack_key
-            return source.path, source.hash, target.path, target.hash, detected_match.distance
+            return (
+                source.path,
+                source.hash,
+                target.path,
+                target.hash,
+                detected_match.distance,
+            )
 
         entries = []
         progress = LazyProgress(progress.scale(len(matches), unit="matches"))

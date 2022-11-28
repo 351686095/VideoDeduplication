@@ -11,7 +11,9 @@ from functools import wraps
 
 logger = logging.getLogger(__file__)
 logging.basicConfig(
-    format="[%(asctime)s - %(filename)s:line %(lineno)s] %(message)s", datefmt="%d %b %H:%M:%S", level=logging.INFO
+    format="[%(asctime)s - %(filename)s:line %(lineno)s] %(message)s",
+    datefmt="%d %b %H:%M:%S",
+    level=logging.INFO,
 )
 
 

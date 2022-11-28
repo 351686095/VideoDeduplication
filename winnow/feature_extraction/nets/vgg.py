@@ -122,7 +122,14 @@ def vgg_a(
                 end_points["global_pool"] = net
             if num_classes:
                 net = slim.dropout(net, dropout_keep_prob, is_training=is_training, scope="dropout7")
-                net = slim.conv2d(net, num_classes, [1, 1], activation_fn=None, normalizer_fn=None, scope="fc8")
+                net = slim.conv2d(
+                    net,
+                    num_classes,
+                    [1, 1],
+                    activation_fn=None,
+                    normalizer_fn=None,
+                    scope="fc8",
+                )
                 if spatial_squeeze:
                     net = tf.squeeze(net, [1, 2], name="fc8/squeezed")
                 end_points[sc.name + "/fc8"] = net
@@ -176,7 +183,8 @@ def vgg_16(
         end_points_collection = sc.original_name_scope + "_end_points"
         # Collect outputs for conv2d, fully_connected and max_pool2d.
         with slim.arg_scope(
-            [slim.conv2d, slim.fully_connected, slim.max_pool2d], outputs_collections=end_points_collection
+            [slim.conv2d, slim.fully_connected, slim.max_pool2d],
+            outputs_collections=end_points_collection,
         ):
             net = slim.repeat(inputs, 2, slim.conv2d, 64, [3, 3], scope="conv1")
             net = slim.max_pool2d(net, [2, 2], scope="pool1")
@@ -200,7 +208,14 @@ def vgg_16(
                 end_points["global_pool"] = net
             if num_classes:
                 net = slim.dropout(net, dropout_keep_prob, is_training=is_training, scope="dropout7")
-                net = slim.conv2d(net, num_classes, [1, 1], activation_fn=None, normalizer_fn=None, scope="fc8")
+                net = slim.conv2d(
+                    net,
+                    num_classes,
+                    [1, 1],
+                    activation_fn=None,
+                    normalizer_fn=None,
+                    scope="fc8",
+                )
                 if spatial_squeeze:
                     net = tf.squeeze(net, [1, 2], name="fc8/squeezed")
                 end_points[sc.name + "/fc8"] = net
@@ -255,7 +270,8 @@ def vgg_19(
         end_points_collection = sc.original_name_scope + "_end_points"
         # Collect outputs for conv2d, fully_connected and max_pool2d.
         with slim.arg_scope(
-            [slim.conv2d, slim.fully_connected, slim.max_pool2d], outputs_collections=end_points_collection
+            [slim.conv2d, slim.fully_connected, slim.max_pool2d],
+            outputs_collections=end_points_collection,
         ):
             net = slim.repeat(inputs, 2, slim.conv2d, 64, [3, 3], scope="conv1")
             net = slim.max_pool2d(net, [2, 2], scope="pool1")
@@ -279,7 +295,14 @@ def vgg_19(
                 end_points["global_pool"] = net
             if num_classes:
                 net = slim.dropout(net, dropout_keep_prob, is_training=is_training, scope="dropout7")
-                net = slim.conv2d(net, num_classes, [1, 1], activation_fn=None, normalizer_fn=None, scope="fc8")
+                net = slim.conv2d(
+                    net,
+                    num_classes,
+                    [1, 1],
+                    activation_fn=None,
+                    normalizer_fn=None,
+                    scope="fc8",
+                )
                 if spatial_squeeze:
                     net = tf.squeeze(net, [1, 2], name="fc8/squeezed")
                 end_points[sc.name + "/fc8"] = net

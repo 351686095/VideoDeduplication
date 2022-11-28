@@ -105,7 +105,14 @@ def plot_pr_curve(pr_curve, title):
       title: the title of the plot
     """
     plt.figure(figsize=(16, 9))
-    plt.plot(np.arange(0.0, 1.05, 0.05), pr_curve, color="b", marker="o", linewidth=3, markersize=10)
+    plt.plot(
+        np.arange(0.0, 1.05, 0.05),
+        pr_curve,
+        color="b",
+        marker="o",
+        linewidth=3,
+        markersize=10,
+    )
     plt.grid(True, linestyle="dotted")
     plt.xlabel("Recall", color="k", fontsize=27)
     plt.ylabel("Precision", color="k", fontsize=27)

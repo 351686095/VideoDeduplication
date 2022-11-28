@@ -10,13 +10,23 @@ from cached_property import cached_property
 from luigi.util import inherits
 
 from winnow.duplicate_detection.neighbors import NeighborMatcher
-from winnow.pipeline.luigi.communities import LocalMatchGraphCommunitiesTarget, MatchGraphCommunities
-from winnow.pipeline.luigi.condense import CondenseFingerprintsTask, CondensedFingerprints
+from winnow.pipeline.luigi.communities import (
+    LocalMatchGraphCommunitiesTarget,
+    MatchGraphCommunities,
+)
+from winnow.pipeline.luigi.condense import (
+    CondenseFingerprintsTask,
+    CondensedFingerprints,
+)
 from winnow.pipeline.luigi.match_graph import MatchGraphBuilder
 from winnow.pipeline.luigi.matches import MatchesReportTask
 from winnow.pipeline.luigi.platform import PipelineTask
 from winnow.pipeline.luigi.utils import prefix, MatchesDF
-from winnow.pipeline.progress_monitor import ProgressBar, ProgressMonitor, BaseProgressMonitor
+from winnow.pipeline.progress_monitor import (
+    ProgressBar,
+    ProgressMonitor,
+    BaseProgressMonitor,
+)
 
 
 class CrossCollectionMatches(PipelineTask):
@@ -28,7 +38,10 @@ class CrossCollectionMatches(PipelineTask):
         """Output file path."""
         match_distance = self.config.proc.match_distance
         name = self.other_collection_name
-        return os.path.join(self.output_directory, f"{prefix(name)}matches_at_{match_distance:.2}_distance.csv")
+        return os.path.join(
+            self.output_directory,
+            f"{prefix(name)}matches_at_{match_distance:.2}_distance.csv",
+        )
 
     def run(self):
         self.logger.info("Reading condensed fingerprints")
@@ -41,11 +54,17 @@ class CrossCollectionMatches(PipelineTask):
 
         self.logger.info("Preparing this collection feature-vectors for matching")
         this_collection_feature_vectors = this_condensed.to_feature_vectors(self.progress.subtask(0.1))
-        self.logger.info("Prepared %s feature-vectors for matching", len(this_collection_feature_vectors))
+        self.logger.info(
+            "Prepared %s feature-vectors for matching",
+            len(this_collection_feature_vectors),
+        )
 
         self.logger.info("Preparing other collection feature-vectors for matching")
         other_collection_feature_vectors = other_condensed.to_feature_vectors(self.progress.subtask(0.1))
-        self.logger.info("Prepared %s feature-vectors for matching", len(other_collection_feature_vectors))
+        self.logger.info(
+            "Prepared %s feature-vectors for matching",
+            len(other_collection_feature_vectors),
+        )
 
         self.logger.info("Building fingerprints index.")
         neighbor_matcher = NeighborMatcher(haystack=other_collection_feature_vectors)

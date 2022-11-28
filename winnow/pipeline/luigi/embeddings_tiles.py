@@ -206,14 +206,20 @@ class SimplePointStyle(PointStyle):
 
     def size(self, zoom: int) -> Union[float, int]:
         """Get the point size for the given zoom."""
-        start_zoom = max(self.min_zoom, self.max_zoom - int(math.log2(float(self.max_size) / float(self.min_size))))
+        start_zoom = max(
+            self.min_zoom,
+            self.max_zoom - int(math.log2(float(self.max_size) / float(self.min_size))),
+        )
         if zoom < start_zoom:
             return self.min_size
         return self.min_size * (2 ** zoom - start_zoom)
 
     def alpha(self, zoom: int) -> float:
         """Get the point opacity."""
-        start_zoom = max(self.min_zoom, self.max_zoom - int(math.log2(float(self.max_size) / float(self.min_size))))
+        start_zoom = max(
+            self.min_zoom,
+            self.max_zoom - int(math.log2(float(self.max_size) / float(self.min_size))),
+        )
         if zoom >= start_zoom:
             return 1.0
         return 0.9 ** (start_zoom - zoom)
@@ -277,7 +283,12 @@ class TileGenerator:
         self.save_tile(figure, tile, output_directory)
         plt.close(figure)
         for subtile in tile.subtiles():
-            self.make_tiles_recursive(points, subtile, output_directory, progress.subtask((tiles_count - 1) / 4))
+            self.make_tiles_recursive(
+                points,
+                subtile,
+                output_directory,
+                progress.subtask((tiles_count - 1) / 4),
+            )
         progress.complete()
 
     def draw_tile(self, points: np.ndarray, tile: Tile) -> Figure:
@@ -387,7 +398,11 @@ class EmbeddingsTilesTask(PipelineTask, abc.ABC):
         new_result_time = self.pipeline.coll.max_mtime(prefix=self.prefix)
         new_result_dir = target.suggest_path(new_result_time)
 
-        self.logger.info("Generating tiles for %s embeddings into %s", self.algorithm_name, new_result_dir)
+        self.logger.info(
+            "Generating tiles for %s embeddings into %s",
+            self.algorithm_name,
+            new_result_dir,
+        )
         style = SimplePointStyle(max_zoom=self.max_zoom)
         generator = TileGenerator(max_zoom=self.max_zoom, point_style=style)
         generator.generate_tiles(embeddings.fingerprints, new_result_dir, self.progress.subtask(0.9))
@@ -406,7 +421,13 @@ class EmbeddingsTilesTask(PipelineTask, abc.ABC):
     def result_directory(self) -> str:
         """Result directory path."""
         dir_name = f"tiles_{self.max_zoom}zoom"
-        return os.path.join(self.output_directory, "embeddings", self.algorithm_name.lower(), self.prefix, dir_name)
+        return os.path.join(
+            self.output_directory,
+            "embeddings",
+            self.algorithm_name.lower(),
+            self.prefix,
+            dir_name,
+        )
 
 
 class PaCMAPTilesTask(EmbeddingsTilesTask):

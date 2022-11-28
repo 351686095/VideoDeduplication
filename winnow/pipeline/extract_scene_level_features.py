@@ -36,7 +36,11 @@ def extract_scene_level_features(files: Collection[str], pipeline: PipelineConte
         return
 
     # Do convert frame-level features into video-level features.
-    logger.info("Starting scene-level feature extraction for %s of %s files", len(remaining_video_paths), len(files))
+    logger.info(
+        "Starting scene-level feature extraction for %s of %s files",
+        len(remaining_video_paths),
+        len(files),
+    )
     frame_to_global(remaining_video_paths, pipeline, progress)
     logger.info("Done scene-level feature extraction.")
 

@@ -123,7 +123,11 @@ class NeighborMatcher:
         if max_distance is not None:
             distances, indices = self._filter_results(distances, indices, threshold=max_distance)
 
-        sorted_results = sorted(zip(needles, indices, distances), key=lambda entry: len(entry[1]), reverse=True)
+        sorted_results = sorted(
+            zip(needles, indices, distances),
+            key=lambda entry: len(entry[1]),
+            reverse=True,
+        )
         seen = set()
         results = []
 
@@ -137,7 +141,13 @@ class NeighborMatcher:
                 # Skip self-matches
                 if needle.key == haystack_key:
                     continue
-                results.append(DetectedMatch(needle_key=needle.key, haystack_key=haystack_key, distance=distance))
+                results.append(
+                    DetectedMatch(
+                        needle_key=needle.key,
+                        haystack_key=haystack_key,
+                        distance=distance,
+                    )
+                )
                 seen.add((needle.key, haystack_key))
                 seen.add((haystack_key, needle.key))
         progress.complete()

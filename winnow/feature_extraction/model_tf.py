@@ -100,7 +100,11 @@ class CNN_tf:
         else:
             raise ValueError("Supported networks: vgg, resnet, inception")
 
-        self.input = tf.keras.Input(dtype=tf.uint8, shape=(self.desired_size, self.desired_size, 3), name="input")
+        self.input = tf.keras.Input(
+            dtype=tf.uint8,
+            shape=(self.desired_size, self.desired_size, 3),
+            name="input",
+        )
         vid_processed = preprocess(self.input)
 
         # create the CNN network
@@ -113,7 +117,10 @@ class CNN_tf:
         # 3. normalize feature vector
         net = [
             tf.nn.l2_normalize(
-                tf.reduce_max(input_tensor=tf.nn.l2_normalize(tf.nn.relu(net[lay]), 3, epsilon=1e-15), axis=(1, 2)),
+                tf.reduce_max(
+                    input_tensor=tf.nn.l2_normalize(tf.nn.relu(net[lay]), 3, epsilon=1e-15),
+                    axis=(1, 2),
+                ),
                 1,
                 epsilon=1e-15,
             )

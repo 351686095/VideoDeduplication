@@ -33,7 +33,12 @@ class TemplateMatchesReportTarget(luigi.Target):
     a matching should be performed again to update report.
     """
 
-    def __init__(self, templates: Sequence[Template], common_prefix: str, have_updates: Callable[[datetime], bool]):
+    def __init__(
+        self,
+        templates: Sequence[Template],
+        common_prefix: str,
+        have_updates: Callable[[datetime], bool],
+    ):
         self.templates: Sequence[Template] = templates
         self.common_prefix: str = common_prefix
         self.file_group: FileGroupTarget = FileGroupTarget(
@@ -146,7 +151,10 @@ class TemplateMatchesReportTask(PipelineTask):
 
         self.logger.info("Going to save report to %s", report_paths)
         matches_path, hash_path = report_paths
-        matches_target, hash_target = luigi.LocalTarget(matches_path), luigi.LocalTarget(hash_path)
+        matches_target, hash_target = (
+            luigi.LocalTarget(matches_path),
+            luigi.LocalTarget(hash_path),
+        )
         with matches_target.open("w") as matches_file, hash_target.open("w") as hash_target:
             template_matches_df.to_csv(matches_file)
             hash_target.write(hash_templates(self.templates))
@@ -182,7 +190,11 @@ class TemplateMatchesReportTask(PipelineTask):
         os.makedirs(templates_folder, exist_ok=True)
         self.logger.info("Loading templates from the folder: %s", templates_folder)
         templates = self.pipeline.template_loader.load_templates_from_folder(templates_folder)
-        self.logger.info("Loaded %s templates: %s", len(templates), ", ".join([t.name for t in templates]))
+        self.logger.info(
+            "Loaded %s templates: %s",
+            len(templates),
+            ", ".join([t.name for t in templates]),
+        )
         return templates
 
     @cached_property
@@ -266,7 +278,13 @@ class DBTemplateMatchesTarget(luigi.Target):
     successfully executed is needed. ``TaskLogRecord`` fills this gap.
     """
 
-    def __init__(self, prefix: str, database: Database, coll: FileCollection, templates: Sequence[Template]):
+    def __init__(
+        self,
+        prefix: str,
+        database: Database,
+        coll: FileCollection,
+        templates: Sequence[Template],
+    ):
         self.prefix: str = prefix
         self.database: Database = database
         self.coll: FileCollection = coll

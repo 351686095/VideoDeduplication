@@ -17,7 +17,10 @@ from winnow.collection.file_collection import FileCollection
 from winnow.duplicate_detection.neighbors import DetectedMatch, FeatureVector
 from winnow.duplicate_detection.neighbors_rapids import NeighborMatcher
 from winnow.pipeline.luigi.annoy_index import AnnoyIndexTask
-from winnow.pipeline.luigi.condense import CondenseFingerprintsTask, CondensedFingerprints
+from winnow.pipeline.luigi.condense import (
+    CondenseFingerprintsTask,
+    CondensedFingerprints,
+)
 from winnow.pipeline.luigi.platform import PipelineTask, ConstTarget
 from winnow.pipeline.luigi.signatures import SignaturesByPathListFileTask
 from winnow.pipeline.luigi.targets import FileGroupTarget
@@ -25,7 +28,12 @@ from winnow.pipeline.luigi.utils import MatchesDF
 from winnow.pipeline.pipeline_context import PipelineContext
 from winnow.pipeline.progress_monitor import BaseProgressMonitor, ProgressMonitor
 from winnow.storage.file_key import FileKey
-from winnow.storage.remote_signatures_dao import RemoteMatch, RemoteSignaturesDAO, RemoteMatchesDAO, RemoteMatchesReport
+from winnow.storage.remote_signatures_dao import (
+    RemoteMatch,
+    RemoteSignaturesDAO,
+    RemoteMatchesDAO,
+    RemoteMatchesReport,
+)
 from winnow.utils.brightness import get_brightness_estimation
 from winnow.utils.files import PathTime, hash_file
 
@@ -42,7 +50,10 @@ class MatchesBaseTask(PipelineTask, abc.ABC):
         feature_vectors = self.read_needles(self.progress.subtask(0.1))
         self.logger.info("Loaded %s needles")
 
-        self.logger.info("Loading Approximate-Nearest-Neighbor index for files with prefix '%s'", self.haystack_prefix)
+        self.logger.info(
+            "Loading Approximate-Nearest-Neighbor index for files with prefix '%s'",
+            self.haystack_prefix,
+        )
         neighbor_matcher = self.load_nn_matcher(self.progress.subtask(0.1))
         self.logger.info("Loaded haystack of %s fingerprints", len(neighbor_matcher.haystack_keys))
 
@@ -60,7 +71,11 @@ class MatchesBaseTask(PipelineTask, abc.ABC):
         """Read needles fingerprints."""
 
     @abc.abstractmethod
-    def save_matches(self, matches: Sequence[DetectedMatch], progress: BaseProgressMonitor = ProgressMonitor.NULL):
+    def save_matches(
+        self,
+        matches: Sequence[DetectedMatch],
+        progress: BaseProgressMonitor = ProgressMonitor.NULL,
+    ):
         """Save found matches to the destination storage."""
 
     @property
@@ -92,7 +107,13 @@ class DBMatchesTarget(luigi.Target):
     multiple times.
     """
 
-    def __init__(self, haystack_prefix: str, needles_prefix: str, database: Database, coll: FileCollection):
+    def __init__(
+        self,
+        haystack_prefix: str,
+        needles_prefix: str,
+        database: Database,
+        coll: FileCollection,
+    ):
         self.haystack_prefix: str = haystack_prefix
         self.needles_prefix: str = needles_prefix
         self.database: Database = database
@@ -168,7 +189,10 @@ class DBMatchesTask(PipelineTask):
 
         self.logger.info("Loading Nearest Neighbor matcher.")
         neighbor_matcher = _load_nn(annoy_input, self.metric, self.progress.subtask(0.05))
-        self.logger.info("Loaded Nearest Neighbor matcher with %s entries.", len(neighbor_matcher.haystack_keys))
+        self.logger.info(
+            "Loaded Nearest Neighbor matcher with %s entries.",
+            len(neighbor_matcher.haystack_keys),
+        )
 
         self.logger.info("Searching for the matches.")
         distance = self.config.proc.match_distance
@@ -178,9 +202,18 @@ class DBMatchesTask(PipelineTask):
 
         filtering_dark = self.progress.subtask(0.1).scale(1.0)
         if self.config.proc.filter_dark_videos:
-            self.logger.info("Filtering dark videos with threshold %s", self.config.proc.filter_dark_videos_thr)
+            self.logger.info(
+                "Filtering dark videos with threshold %s",
+                self.config.proc.filter_dark_videos_thr,
+            )
             file_keys = condensed.to_file_keys(progress=filtering_dark.subtask(0.2))
-            matches, metadata = filter_dark(file_keys, matches, self.pipeline, filtering_dark.subtask(0.8), self.logger)
+            matches, metadata = filter_dark(
+                file_keys,
+                matches,
+                self.pipeline,
+                filtering_dark.subtask(0.8),
+                self.logger,
+            )
             self.logger.info("Saving file metadata")
             result_storage = self.pipeline.result_storage
             result_storage.add_metadata((key.path, key.hash, meta) for key, meta in metadata.items())
@@ -189,7 +222,13 @@ class DBMatchesTask(PipelineTask):
         def _entry(detected_match: DetectedMatch):
             """Flatten (query_key, match_key, dist) match entry."""
             query, match = detected_match.needle_key, detected_match.haystack_key
-            return query.path, query.hash, match.path, match.hash, detected_match.distance
+            return (
+                query.path,
+                query.hash,
+                match.path,
+                match.hash,
+                detected_match.distance,
+            )
 
         self.logger.info("Saving %s matches to the database", len(matches))
         result_storage = self.pipeline.result_storage
@@ -258,8 +297,17 @@ class DBMatchesByFileListTask(PipelineTask):
         self.logger.info("Found %s matches", len(matches))
 
         if self.config.proc.filter_dark_videos:
-            self.logger.info("Filtering dark videos with threshold %s", self.config.proc.filter_dark_videos_thr)
-            matches, metadata = filter_dark(file_keys, matches, self.pipeline, self.progress.subtask(0.03), self.logger)
+            self.logger.info(
+                "Filtering dark videos with threshold %s",
+                self.config.proc.filter_dark_videos_thr,
+            )
+            matches, metadata = filter_dark(
+                file_keys,
+                matches,
+                self.pipeline,
+                self.progress.subtask(0.03),
+                self.logger,
+            )
             result_storage = self.pipeline.result_storage
             result_storage.add_metadata((key.path, key.hash, meta) for key, meta in metadata.items())
             self.progress.increase(0.03)
@@ -267,7 +315,13 @@ class DBMatchesByFileListTask(PipelineTask):
         def _entry(detected_match: DetectedMatch):
             """Flatten (query_key, match_key, dist) match entry."""
             query, match = detected_match.needle_key, detected_match.haystack_key
-            return query.path, query.hash, match.path, match.hash, detected_match.distance
+            return (
+                query.path,
+                query.hash,
+                match.path,
+                match.hash,
+                detected_match.distance,
+            )
 
         self.logger.info("Saving %s matches to the database", len(matches))
         result_storage = self.pipeline.result_storage
@@ -305,7 +359,10 @@ class MatchesReportTask(PipelineTask):
 
         self.logger.info("Loading Nearest Neighbor matcher.")
         neighbor_matcher = _load_nn(annoy_input, self.metric, self.progress.subtask(0.05))
-        self.logger.info("Loaded Nearest Neighbor matcher with %s entries.", len(neighbor_matcher.haystack_keys))
+        self.logger.info(
+            "Loaded Nearest Neighbor matcher with %s entries.",
+            len(neighbor_matcher.haystack_keys),
+        )
 
         self.logger.info("Searching for the matches.")
         distance = self.config.proc.match_distance
@@ -315,9 +372,18 @@ class MatchesReportTask(PipelineTask):
 
         filtering_dark = self.progress.subtask(0.1).scale(1.0)
         if self.config.proc.filter_dark_videos:
-            self.logger.info("Filtering dark videos with threshold %s", self.config.proc.filter_dark_videos_thr)
+            self.logger.info(
+                "Filtering dark videos with threshold %s",
+                self.config.proc.filter_dark_videos_thr,
+            )
             file_keys = condensed.to_file_keys(progress=filtering_dark.subtask(0.2))
-            matches, _ = filter_dark(file_keys, matches, self.pipeline, filtering_dark.subtask(0.8), self.logger)
+            matches, _ = filter_dark(
+                file_keys,
+                matches,
+                self.pipeline,
+                filtering_dark.subtask(0.8),
+                self.logger,
+            )
         filtering_dark.complete()
 
         self.logger.info("Preparing file matches for saving")
@@ -428,8 +494,17 @@ class MatchesByFileListTask(PipelineTask):
         self.logger.info("Found %s matches", len(matches))
 
         if self.config.proc.filter_dark_videos:
-            self.logger.info("Filtering dark videos with threshold %s", self.config.proc.filter_dark_videos_thr)
-            matches, _ = filter_dark(file_keys, matches, self.pipeline, self.progress.subtask(0.05), self.logger)
+            self.logger.info(
+                "Filtering dark videos with threshold %s",
+                self.config.proc.filter_dark_videos_thr,
+            )
+            matches, _ = filter_dark(
+                file_keys,
+                matches,
+                self.pipeline,
+                self.progress.subtask(0.05),
+                self.logger,
+            )
 
         self.logger.info("Preparing file matches for saving")
         matches_df = MatchesDF.make(matches, self.progress.remaining())
@@ -604,7 +679,9 @@ class RemoteMatchesTask(PipelineTask):
 
 
 def _load_nn(
-    annoy_input: FileGroupTarget, metric: str = "angular", progress: BaseProgressMonitor = ProgressMonitor.NULL
+    annoy_input: FileGroupTarget,
+    metric: str = "angular",
+    progress: BaseProgressMonitor = ProgressMonitor.NULL,
 ) -> NeighborMatcher:
     """Load the ``NeighborMatcher`` from the Annoy-index."""
     (annoy_path, keys_path), _ = annoy_input.latest_result
@@ -655,7 +732,11 @@ def filter_dark(
 def _metadata(gray_max, threshold) -> Dict:
     """Create metadata dict."""
     video_dark_flag = gray_max < threshold
-    return {"gray_max": gray_max, "video_dark_flag": video_dark_flag, "flagged": video_dark_flag}
+    return {
+        "gray_max": gray_max,
+        "video_dark_flag": video_dark_flag,
+        "flagged": video_dark_flag,
+    }
 
 
 def _reject(detected_matches: Sequence[DetectedMatch], discarded: Set[FileKey]) -> Iterator[DetectedMatch]:

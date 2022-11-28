@@ -7,7 +7,11 @@ import numpy as np
 import tensorflow as tf
 
 from winnow.feature_extraction import IntermediateCnnExtractor
-from winnow.pipeline.luigi.targets import PrefixFeatureTarget, PathListFileFeatureTarget, PathListFeatureTarget
+from winnow.pipeline.luigi.targets import (
+    PrefixFeatureTarget,
+    PathListFileFeatureTarget,
+    PathListFeatureTarget,
+)
 from winnow.pipeline.luigi.platform import PipelineTask
 from winnow.pipeline.pipeline_context import PipelineContext
 from winnow.pipeline.progress_monitor import ProgressMonitor, BaseProgressMonitor

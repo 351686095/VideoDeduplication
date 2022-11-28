@@ -12,7 +12,11 @@ from winnow.pipeline.pipeline_context import PipelineContext
 from winnow.pipeline.progress_monitor import ProgressMonitor, BaseProgressMonitor
 from winnow.storage.file_key import FileKey
 from winnow.utils.files import hash_file
-from winnow.utils.metadata_extraction import extract_from_list_of_videos, convert_to_df, parse_and_filter_metadata_df
+from winnow.utils.metadata_extraction import (
+    extract_from_list_of_videos,
+    convert_to_df,
+    parse_and_filter_metadata_df,
+)
 
 
 class DBExifTask(PipelineTask):

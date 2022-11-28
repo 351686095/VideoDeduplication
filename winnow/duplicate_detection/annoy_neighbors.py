@@ -110,7 +110,10 @@ class AnnoyNNeighbors:
         progress = progress.bar(scale=len(data), unit="vectors")
         for features in data:
             vec_indices, vec_distances = self.annoy_index.get_nns_by_vector(
-                features, self.n_neighbors, include_distances=True, search_k=self.search_k
+                features,
+                self.n_neighbors,
+                include_distances=True,
+                search_k=self.search_k,
             )
             distances.append(vec_distances)
             indices.append(vec_indices)

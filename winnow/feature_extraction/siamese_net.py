@@ -59,7 +59,9 @@ class DNN(object):
             self.global_step = 1
             with tf.compat.v1.name_scope("training"):
                 anchor, positive, negative = tf.unstack(
-                    tf.reshape(self.output, [-1, 3, self.output.get_shape().as_list()[1]]), 3, 1
+                    tf.reshape(self.output, [-1, 3, self.output.get_shape().as_list()[1]]),
+                    3,
+                    1,
                 )
                 loss, error = self.triplet_loss(anchor, positive, negative, gamma)
 

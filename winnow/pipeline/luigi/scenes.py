@@ -78,7 +78,12 @@ class ScenesReportTask(PipelineTask):
         file_keys = list(self.pipeline.coll.iter_keys(prefix=self.prefix, min_mtime=latest_time))
 
         since = latest_time or "the very beginning"
-        self.logger.info("Detecting scenes for %s files from '%s' since %s", len(file_keys), self.prefix, since)
+        self.logger.info(
+            "Detecting scenes for %s files from '%s' since %s",
+            len(file_keys),
+            self.prefix,
+            since,
+        )
         frame_features = self.pipeline.repr_storage.frame_level
         scenes = extract_scenes(
             file_keys,

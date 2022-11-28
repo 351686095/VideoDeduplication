@@ -11,7 +11,11 @@ from dataclasses import dataclass
 from winnow.pipeline.luigi.matches import MatchesReportTask
 from winnow.pipeline.luigi.platform import PipelineTask, Match
 from winnow.pipeline.luigi.utils import MatchesDF, FileKeyDF
-from winnow.pipeline.progress_monitor import ProgressMonitor, LazyProgress, BaseProgressMonitor
+from winnow.pipeline.progress_monitor import (
+    ProgressMonitor,
+    LazyProgress,
+    BaseProgressMonitor,
+)
 from winnow.storage.file_key import FileKey
 
 # Type hint for function calculating graph edge weight from match distance

@@ -120,7 +120,13 @@ class W2VecNSW(W2Vec):
         return words
 
 
-NAME_TO_T2V = {"bow": BowVec, "bow_nsw": BowVecNSW, "w2v": W2Vec, "w2v_nsw": W2VecNSW, "idxvec": IndexVec}
+NAME_TO_T2V = {
+    "bow": BowVec,
+    "bow_nsw": BowVecNSW,
+    "w2v": W2Vec,
+    "w2v_nsw": W2VecNSW,
+    "idxvec": IndexVec,
+}
 
 
 def get_txt2vec(name):

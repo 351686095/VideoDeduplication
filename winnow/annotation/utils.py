@@ -6,11 +6,19 @@ from ipywidgets import interact, fixed, Button, Layout, GridspecLayout, Output
 
 
 def create_expanded_button(description, button_style):
-    return Button(description=description, button_style=button_style, layout=Layout(height="auto", width="auto"))
+    return Button(
+        description=description,
+        button_style=button_style,
+        layout=Layout(height="auto", width="auto"),
+    )
 
 
 def create_interface(  # noqa: C901
-    matches_df, save_path, annotation_label, transform_query_path=True, frames_directory=None
+    matches_df,
+    save_path,
+    annotation_label,
+    transform_query_path=True,
+    frames_directory=None,
 ):
     # Create Buttons
     a = create_expanded_button("Next Video", "info")

@@ -56,7 +56,11 @@ def default_video_search_models_path(directory=None, base_url=None):
     """Get default pretrained model path."""
     models = model_artifacts(directory, base_url)
 
-    return models.get(DEFAULT_MODEL_VIDEO), models.get(DEFAULT_MODEL_TEXT), models.get(DEFAULT_MODEL_VOCAB)
+    return (
+        models.get(DEFAULT_MODEL_VIDEO),
+        models.get(DEFAULT_MODEL_TEXT),
+        models.get(DEFAULT_MODEL_VOCAB),
+    )
 
 
 def load_model(path_to_model=None, path_to_w2v=None) -> CrossModalNetwork:

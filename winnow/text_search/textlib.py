@@ -11,7 +11,9 @@ import sys
 
 logger = logging.getLogger(__file__)
 logging.basicConfig(
-    format="[%(asctime)s - %(filename)s:line %(lineno)s] %(message)s", datefmt="%d %b %H:%M:%S", level=logging.INFO
+    format="[%(asctime)s - %(filename)s:line %(lineno)s] %(message)s",
+    datefmt="%d %b %H:%M:%S",
+    level=logging.INFO,
 )
 
 en_stop_fname = os.path.join(os.path.dirname(__file__), "stopwords_en.txt")
@@ -95,7 +97,13 @@ dogs-x runs""".split(
     )
 
     for t in test_strs:
-        print(t, "->", TextTool.tokenize(t, clean=True, language="en"), "->", TextTool.tokenize(t, "en", True))
+        print(
+            t,
+            "->",
+            TextTool.tokenize(t, clean=True, language="en"),
+            "->",
+            TextTool.tokenize(t, "en", True),
+        )
 
     test_strs = """一间 干净 整洁 的 房间 。
 一只 黄色 的 小狗 趴在 长椅 上""".split(

@@ -31,7 +31,10 @@ from winnow.storage.remote_signatures_dao import (
 )
 from winnow.storage.repr_storage import ReprStorage
 from winnow.storage.repr_utils import path_resolver, PathResolver
-from winnow.text_search.main_utils import load_model as load_text_search_model, VideoSearch
+from winnow.text_search.main_utils import (
+    load_model as load_text_search_model,
+    VideoSearch,
+)
 from winnow.text_search.model import CrossModalNetwork
 from winnow.text_search.similarity_index import AnnoySimilarityIndex, SimilarityIndex
 from winnow.utils.files import FileHashFunc, hash_path, HashCache, hash_file, PathTime
@@ -119,7 +122,10 @@ class PipelineContext:
     @cached_property
     def secure_storage(self) -> SecureStorage:
         """Get secured credentials storage."""
-        return SecureStorage(path=self.config.repr.directory, master_key_path=self.config.security.master_key_path)
+        return SecureStorage(
+            path=self.config.repr.directory,
+            master_key_path=self.config.security.master_key_path,
+        )
 
     @cached_property
     def pretrained_model(self):

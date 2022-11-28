@@ -55,9 +55,12 @@ class RapidsMatcher:
         if self.model is None:
             self.fit(data)
 
-        unique_files, cluster_frequency, avg_distance_list, final_dm = get_relevant_information(
-            data, self.model, calc_dm=True, metric=self.metric
-        )
+        (
+            unique_files,
+            cluster_frequency,
+            avg_distance_list,
+            final_dm,
+        ) = get_relevant_information(data, self.model, calc_dm=True, metric=self.metric)
 
         self.unique_files = unique_files
         self.cluster_frequency = cluster_frequency

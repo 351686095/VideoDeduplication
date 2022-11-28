@@ -15,10 +15,11 @@ from winnow.utils.scene_detection import *
 
 logger = logging.getLogger(__name__)
 
+
 def detect_scenes(frame_level_features, minimum_duration=0):
     if frame_level_features.shape[0] > minimum_duration:
         diffs = cosine_series(frame_level_features)
-        scene_ident = ((diffs > np.quantile(diffs, upper_thresh)) & (diffs > min_dif))
+        scene_ident = (diffs > np.quantile(diffs, upper_thresh)) & (diffs > min_dif)
         idxs = np.array(list(range(len(scene_ident))))[scene_ident]
         if 0 not in idxs:
             idxs = [0] + list(idxs)

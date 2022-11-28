@@ -17,7 +17,12 @@ from winnow.pipeline.luigi.platform import PipelineTask
 from winnow.pipeline.luigi.signatures import SignaturesTask
 from winnow.pipeline.luigi.targets import FileGroupTarget
 from winnow.pipeline.luigi.utils import FileKeyDF
-from winnow.pipeline.progress_monitor import ProgressBar, ProgressMonitor, LazyProgress, BaseProgressMonitor
+from winnow.pipeline.progress_monitor import (
+    ProgressBar,
+    ProgressMonitor,
+    LazyProgress,
+    BaseProgressMonitor,
+)
 from winnow.storage.base_repr_storage import BaseReprStorage
 from winnow.storage.file_key import FileKey
 
@@ -70,7 +75,10 @@ class CondensedFingerprints:
     def __getitem__(self, item) -> Union["CondensedFingerprints", Tuple[FileKey, np.ndarray]]:
         """Get item or a slice form the CondensedFingerprints collection."""
         if isinstance(item, (slice, collections.Collection)):
-            return CondensedFingerprints(fingerprints=self.fingerprints[item], file_keys_df=self.file_keys_df[item])
+            return CondensedFingerprints(
+                fingerprints=self.fingerprints[item],
+                file_keys_df=self.file_keys_df[item],
+            )
         return FileKey(**self.file_keys_df.loc[item]), self.fingerprints[item]
 
     @staticmethod
@@ -118,7 +126,11 @@ class CondensedFingerprints:
                     fingerprints.append(fingerprint)
                     file_key_tuples.append(astuple(file_key))
                 else:
-                    logger.error("Unexpected fingerprint shape %s of file %s", fingerprint.shape, file_key)
+                    logger.error(
+                        "Unexpected fingerprint shape %s of file %s",
+                        fingerprint.shape,
+                        file_key,
+                    )
             except Exception:
                 logger.exception("Error loading fingerprint from %s", asdict(file_key))
             read_progress.increase(1)
@@ -133,7 +145,9 @@ class CondensedFingerprints:
 
     @staticmethod
     def read_files(
-        fingerprints_file: str, file_keys_file: str, progress: BaseProgressMonitor = ProgressMonitor.NULL
+        fingerprints_file: str,
+        file_keys_file: str,
+        progress: BaseProgressMonitor = ProgressMonitor.NULL,
     ) -> "CondensedFingerprints":
         """Read condensed fingerprints from files."""
         progress.scale(1.0)
@@ -256,11 +270,18 @@ class CondenseFingerprintsTask(PipelineTask):
         self.logger.info("Loaded %s new fingerprints.", len(condensed))
 
         if previous_results is not None:
-            self.logger.info("Merging new fingerprints list with the existing %s fingerprints", len(previous_results))
+            self.logger.info(
+                "Merging new fingerprints list with the existing %s fingerprints",
+                len(previous_results),
+            )
             condensed = CondensedFingerprints.update(previous_results, condensed, progress=self.progress.subtask(0.1))
             self.logger.info("Merged previous results with new fingerprints.")
 
-        self.logger.info("Writing %s fingerprints to %s", len(condensed), target.suggest_paths(new_results_time))
+        self.logger.info(
+            "Writing %s fingerprints to %s",
+            len(condensed),
+            target.suggest_paths(new_results_time),
+        )
 
         target.write(condensed, new_results_time)
 

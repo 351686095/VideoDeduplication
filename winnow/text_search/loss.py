@@ -28,7 +28,14 @@ class MarginRankingLoss(nn.Module):
     Compute margin ranking loss
     """
 
-    def __init__(self, margin=0, measure="cosine", max_violation=False, cost_style="sum", direction="bidir"):
+    def __init__(
+        self,
+        margin=0,
+        measure="cosine",
+        max_violation=False,
+        cost_style="sum",
+        direction="bidir",
+    ):
         super(MarginRankingLoss, self).__init__()
         self.margin = margin
         self.cost_style = cost_style

@@ -6,7 +6,11 @@ import numpy as np
 from sqlalchemy import tuple_
 
 from db.schema import Files
-from winnow.pipeline.luigi.condense import CondenseFingerprintsTask, CondensedFingerprints, CondensedFingerprintsTarget
+from winnow.pipeline.luigi.condense import (
+    CondenseFingerprintsTask,
+    CondensedFingerprints,
+    CondensedFingerprintsTarget,
+)
 from winnow.pipeline.luigi.platform import PipelineTask
 from winnow.pipeline.luigi.targets import FileGroupTarget
 from winnow.pipeline.progress_monitor import ProgressBar, LazyProgress

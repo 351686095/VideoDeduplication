@@ -2,7 +2,10 @@ import logging
 from typing import Collection, Dict
 
 from winnow.feature_extraction import SimilarityModel
-from winnow.pipeline.extract_scene_level_features import scene_features_exist, extract_scene_level_features
+from winnow.pipeline.extract_scene_level_features import (
+    scene_features_exist,
+    extract_scene_level_features,
+)
 from winnow.pipeline.pipeline_context import PipelineContext
 from winnow.pipeline.progress_monitor import ProgressMonitor
 from winnow.storage.file_key import FileKey
@@ -13,7 +16,10 @@ logger = logging.getLogger(__name__)
 
 
 def extract_scene_signatures(
-    files: Collection[str], pipeline: PipelineContext, hashes=None, progress=ProgressMonitor.NULL
+    files: Collection[str],
+    pipeline: PipelineContext,
+    hashes=None,
+    progress=ProgressMonitor.NULL,
 ):
     """Calculate and save signatures for the given files to repr-storage."""
 
@@ -33,7 +39,11 @@ def extract_scene_signatures(
         return
 
     # Do calculate signatures
-    logger.info("Starting signature extraction for %s of %s files", len(remaining_video_paths), len(files))
+    logger.info(
+        "Starting signature extraction for %s of %s files",
+        len(remaining_video_paths),
+        len(files),
+    )
     signatures = extract_signatures(remaining_video_paths, pipeline)
     bulk_write(pipeline.repr_storage.scene_signature, signatures)
 

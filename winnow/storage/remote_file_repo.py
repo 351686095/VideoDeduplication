@@ -41,7 +41,12 @@ class BaseUrl:
 
     def exists(self, relpath):
         """Check if the file exists."""
-        resp = requests.head(self._resolve(relpath), auth=self.auth, headers=self.headers, cookies=self.cookies)
+        resp = requests.head(
+            self._resolve(relpath),
+            auth=self.auth,
+            headers=self.headers,
+            cookies=self.cookies,
+        )
         # If operation succeeded, then resource exists.
         if resp.ok:
             return True

@@ -54,7 +54,12 @@ class PathListFileFeatureTarget(luigi.Target):
 class PathListFeatureTarget(luigi.Target):
     """Features of all files which collection-paths are listed."""
 
-    def __init__(self, coll_path_list: Collection[str], coll: FileCollection, reprs: BaseReprStorage):
+    def __init__(
+        self,
+        coll_path_list: Collection[str],
+        coll: FileCollection,
+        reprs: BaseReprStorage,
+    ):
         self.coll_path_list: Collection[str] = coll_path_list
         self.coll: FileCollection = coll
         self.reprs: BaseReprStorage = reprs
@@ -136,7 +141,12 @@ class FileGroupTarget(luigi.Target):
     All files in the same group must have the same timestamp.
     """
 
-    def __init__(self, common_prefix: str, suffixes: Sequence[str], need_updates: Callable[[datetime], bool]):
+    def __init__(
+        self,
+        common_prefix: str,
+        suffixes: Sequence[str],
+        need_updates: Callable[[datetime], bool],
+    ):
         self.common_prefix: str = common_prefix
         self.suffixes = tuple(suffixes)
         self._need_updates: Callable[[datetime], bool] = need_updates
