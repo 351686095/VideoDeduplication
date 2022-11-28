@@ -18,14 +18,18 @@ class ReprStorage:
         kwargs["load"] = load_func
         kwargs["repr_suffix"] = "_data.xml"
         self.directory = abspath(directory)
-        self.data = storage_factory(join(self.directory, "data"), **kwargs)
+        self.features = storage_factory(join(self.directory, "features"), **kwargs)
+        self.signature = storage_factory(join(self.directory, "video_signatures"))
+        self.scene_signature = storage_factory(join(self.directory, "scene_signatures"))
 
     def __repr__(self):
         return f"ReprStorage('{self.directory}')"
 
     def close(self):
         """Release any underlying resources (close database connections, etc.)."""
-        self.data.close()
+        self.features.close()
+        self.signature.close()
+        self.scene_signature.close()
 
 
 def save_func(file, value):

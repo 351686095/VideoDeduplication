@@ -20,8 +20,9 @@ from winnow.pipeline.luigi.scene_features import SceneFeaturesTask
 from winnow.pipeline.luigi.video_features import (
     VideoFeaturesTask,
     VideoFeaturesByPathListFileTask,
-    VideoFeaturesByPathListTask,
+    VideoFeaturesByPathListTask
 )
+from winnow.pipeline.luigi.xml_features import VideoProcessingTask
 from winnow.pipeline.pipeline_context import PipelineContext
 from winnow.pipeline.progress_monitor import ProgressMonitor, BaseProgressMonitor
 from winnow.storage.file_key import FileKey
@@ -34,7 +35,7 @@ class ScenelessSignaturesTask(PipelineTask):
     prefix: str = luigi.Parameter(default="audio")
 
     def requires(self):
-        yield VideoFeaturesTask(
+        yield VideoProcessingTask(
             config=self.config,
             prefix=self.prefix,
         )
@@ -68,11 +69,7 @@ class SignaturesTask(PipelineTask):
     prefix: str = luigi.Parameter(default="video")
 
     def requires(self):
-        yield VideoFeaturesTask(
-            config=self.config,
-            prefix=self.prefix,
-        )
-        yield SceneFeaturesTask(
+        yield VideoProcessingTask(
             config=self.config,
             prefix=self.prefix,
         )
@@ -198,7 +195,9 @@ def extract_signatures(
     similarity_model = SimilarityModel()
 
     logger.info("Reading video-level features.")
-    video_features = bulk_read(pipeline.repr_storage.video_level, select=file_keys)
+    video_features = bulk_read(pipeline.repr_storage.features, select=file_keys)
+    for key in video_features.keys():
+        video_features[key] = video_features[key]["video_features"]
     logger.info("Loaded %s vide-level features", len(video_features))
 
     logger.info("Calculating fingerprints from video-level features.")
@@ -232,7 +231,9 @@ def extract_scene_signatures(
     similarity_model = SimilarityModel()
 
     logger.info("Reading scene-level features.")
-    scene_features = bulk_read(pipeline.repr_storage.scene_level, select=file_keys)
+    scene_features = bulk_read(pipeline.repr_storage.features, select=file_keys)
+    for key in scene_features.keys():
+        scene_features[key] = scene_features[key]["scene_features"]
     logger.info("Loaded %s scene-level features", len(scene_features))
 
     logger.info("Calculating fingerprints from scene-level features.")
