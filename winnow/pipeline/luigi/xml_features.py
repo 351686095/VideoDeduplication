@@ -52,9 +52,15 @@ class VideoProcessingTask(PipelineTask):
 
 
 def process_features(file_key: FileKey, frames_features: np.ndarray):
+    logging.debug("detecting scenes")
     scene_data, scene_features = detect_scenes(frames_features)
-    scene_features = global_vector(scene_features)
+    logging.debug("aggregating scenes")
+    scene_features = [global_vector(feats) for feats in scene_features]
+    scene_features = np.reshape(np.array(scene_features), (len(scene_features), -1))
+    logging.debug("aggregating video")
     video_features = global_vector(frames_features)
+    video_features = np.reshape(np.array(video_features), (1, -1))
+    logging.debug("outputting data")
     data = {}
     data["scene_data"] = scene_data
     data["scene_features"] = scene_features

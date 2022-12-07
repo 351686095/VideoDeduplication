@@ -198,7 +198,7 @@ def extract_signatures(
     video_features = bulk_read(pipeline.repr_storage.features, select=file_keys)
     for key in video_features.keys():
         video_features[key] = video_features[key]["video_features"]
-    logger.info("Loaded %s vide-level features", len(video_features))
+    logger.info("Loaded %s video-level features", len(video_features))
 
     logger.info("Calculating fingerprints from video-level features.")
     signatures = similarity_model.predict(video_features)

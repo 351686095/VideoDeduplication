@@ -84,7 +84,9 @@ def feature_extraction_videos(
         ):
             logger.debug("Extracting features for %s", video_id)
             frame_features = model.extract(frame_tensor, batch_sz)
+            logger.debug("Extracted, processing")
             on_extracted(video_id, frame_features)
+            logger.debug("Processed.")
             next(progress_bar)
             semaphore.release()
 

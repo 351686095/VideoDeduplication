@@ -24,23 +24,23 @@ def repr_storage_factory(
 ) -> ReprStorageFactory:
     """Get storage factory depending on the storage type from the config."""
 
-    def detect_storage(directory):
+    def detect_storage(directory, *args, **kwargs):
         """Detect existing storage."""
         if LMDBReprStorage.is_storage(directory):
             logger.info("Detected LMDB repr-storage in %s", directory)
-            return LegacyStorageWrapper(LMDBReprStorage(directory))
+            return LegacyStorageWrapper(LMDBReprStorage(directory, *args, **kwargs))
         elif SQLiteReprStorage.is_storage(directory):
             logger.info("Detected SQLite repr-storage in %s", directory)
-            return LegacyStorageWrapper(SQLiteReprStorage(directory))
+            return LegacyStorageWrapper(SQLiteReprStorage(directory, *args, **kwargs))
         elif SimpleReprStorage.is_storage(directory):
             logger.info("Detected simple path-based repr-storage in %s", directory)
-            return SimpleReprStorage(directory)
+            return SimpleReprStorage(directory, *args, **kwargs)
         else:
             logger.info(
                 "Cannot detect storage type in %s. Using default factory instead.",
                 directory,
             )
-            return default_factory(directory)
+            return default_factory(directory, *args, **kwargs)
 
     if storage_type is StorageType.SIMPLE:
         return SimpleReprStorage
