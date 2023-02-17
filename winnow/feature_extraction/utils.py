@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import logging
 
 
 def load_video(video, desired_size, frame_sampling) -> np.ndarray:
@@ -46,6 +47,7 @@ def load_video(video, desired_size, frame_sampling) -> np.ndarray:
             else:
                 break
             count += 1
+        logging.debug(f"Video '{video}' processed with {len(frames)} of {count} frames.")
         cap.release()
         video_tensor = np.array(frames)
 
