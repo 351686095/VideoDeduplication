@@ -10,6 +10,17 @@ sources:
     - avi
     - flv
     - mkv
+    - wmv
+    - mov
+    - png
+    - ico
+    - bmp
+    - jpg
+    - gif
+    - tga
+    - tiff
+    - webp
+    - svg
 
 repr:
   directory: data/representations
