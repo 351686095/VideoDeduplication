@@ -1,7 +1,8 @@
 """The matches module offers high-level operations with matches."""
 import pandas as pd
+import numpy as np
 from ..duplicate_detection.annoy_neighbors import AnnoyNNeighbors
-
+import logging
 
 def unique(row):
     return "".join([str(x) for x in sorted([row["query"], row["match"]])])
@@ -19,10 +20,10 @@ def filter_results(threshold, distances, indices):
 
 def get_summarized_matches(video_signatures, new_signatures=[], distance=0.75, metric="cosine"):
     if len(new_signatures) == 0:
-        print("Skipping matching: no new signatures.")
+        logging.debug("Skipping matching: no new signatures.")
         return None
 
-    neighbors = min(20, video_signatures.shape[0])
+    neighbors = 20
     nn = AnnoyNNeighbors(n_neighbors=neighbors, metric=metric)
     nn.fit(video_signatures)
 
