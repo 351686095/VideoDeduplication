@@ -3,12 +3,14 @@ import logging
 from typing import Collection
 import numpy as np
 import pandas as pd
+from glob import glob
 
 from winnow.feature_extraction.loading_utils import global_vector
-from winnow.pipeline.extract_frame_level_features import (
-    extract_frame_level_features,
-    frame_features_exist,
-)
+
+# from winnow.pipeline.extract_frame_level_features import (
+#    extract_frame_level_features,
+#    frame_features_exist,
+# )
 from winnow.pipeline.pipeline_context import PipelineContext
 from winnow.pipeline.progress_monitor import ProgressMonitor
 
@@ -23,9 +25,9 @@ def extract_scene_level_features(files: Collection[str], pipeline: PipelineConte
     remaining_video_paths = [*missing_scene_features(files, pipeline)]
 
     # Ensure dependencies are satisfied
-    if not frame_features_exist(remaining_video_paths, pipeline):
-        extract_frame_level_features(remaining_video_paths, pipeline, progress=progress.subtask(0.9))
-        progress = progress.subtask(0.1)
+    # if not frame_features_exist(remaining_video_paths, pipeline):
+    # extract_frame_level_features(remaining_video_paths, pipeline, progress=progress.subtask(0.9))
+    # progress = progress.subtask(0.1)
 
     # Skip step if required results already exist
     if not remaining_video_paths:
@@ -34,7 +36,11 @@ def extract_scene_level_features(files: Collection[str], pipeline: PipelineConte
         return
 
     # Do convert frame-level features into video-level features.
-    logger.info("Starting scene-level feature extraction for %s of %s files", len(remaining_video_paths), len(files))
+    logger.info(
+        "Starting scene-level feature extraction for %s of %s files",
+        len(remaining_video_paths),
+        len(files),
+    )
     frame_to_global(remaining_video_paths, pipeline, progress)
     logger.info("Done scene-level feature extraction.")
 
@@ -54,9 +60,16 @@ def scene_features_exist(files, pipeline: PipelineContext):
 
 def get_scene_durations(pipeline: PipelineContext):
     config = pipeline.config
-    scene_metadata_path = os.path.join(config.repr.directory, "scene_metadata.csv")
+    scene_metadata_path = os.path.join(config.repr.directory, "scenes__*.csv")
+    # Pick most recent scene metadata path
+    viable_paths = glob(scene_metadata_path)
+    if len(viable_paths) == 0:
+        raise Exception("Error loading scene metadata, no files of pattern '%s' found" % scene_metadata_path)
+    elif len(viable_paths == 1):
+        scene_metadata_path = viable_paths[0]
+    else:
+        scene_metadata_path = sorted(viable_paths)[-1]
     try:
-        # detect_scenes must have been run with config.save_files == True for this to work
         scene_metadata = pd.read_csv(scene_metadata_path)
         scene_durations = []
         for _, row in scene_metadata.iterrows():
@@ -67,7 +80,7 @@ def get_scene_durations(pipeline: PipelineContext):
 
 
 def frame_to_global(files, pipeline: PipelineContext, progress=ProgressMonitor.NULL):
-    """Calculate and save video-level feature vectors based on frame-level representation."""
+    """Calculate and save scene-level feature vectors based on frame-level representation."""
     scene_durations = get_scene_durations(pipeline)
     config = pipeline.config
     # Seconds per frame

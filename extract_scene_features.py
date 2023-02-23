@@ -4,7 +4,8 @@ import click
 
 from winnow.pipeline.extract_scene_signatures import extract_scene_signatures
 from winnow.pipeline.pipeline_context import PipelineContext
-from winnow.pipeline.detect_scenes import detect_scenes
+
+# from winnow.pipeline.detect_scenes import detect_scenes
 from winnow.utils.config import resolve_config
 from winnow.utils.files import scan_videos, scan_videos_from_txt
 from winnow.utils.logging import configure_logging_cli
@@ -47,7 +48,7 @@ def main(config, list_of_files, frame_sampling, save_frames):
         videos = scan_videos_from_txt(list_of_files, extensions=config.sources.extensions)
 
     pipeline = PipelineContext(config)
-    detect_scenes(files=videos, pipeline=pipeline)
+    # detect_scenes(files=videos, pipeline=pipeline)
     extract_scene_signatures(files=videos, pipeline=pipeline)
 
 

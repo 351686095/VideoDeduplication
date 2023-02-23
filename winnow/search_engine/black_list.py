@@ -80,7 +80,11 @@ class BlackList:
 
     def exclude_time_range(self, false_positive: TemplateMatches):
         """Exclude file's time range from the template scope."""
-        entry_key = (false_positive.template.name, false_positive.file.file_path, false_positive.file.sha256)
+        entry_key = (
+            false_positive.template.name,
+            false_positive.file.file_path,
+            false_positive.file.sha256,
+        )
         if entry_key not in self._time_exclusions:
             self._time_exclusions[entry_key] = Cover()
         cover = self._time_exclusions[entry_key]

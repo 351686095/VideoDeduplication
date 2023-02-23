@@ -1,23 +1,20 @@
+import logging.config
 import os
 
 import click
+import luigi
 
-from winnow.pipeline.extract_video_signatures import extract_video_signatures
-from winnow.pipeline.pipeline_context import PipelineContext
-from winnow.pipeline.store_database_signatures import store_database_signatures
+from winnow.pipeline.luigi.scenes import ScenesTask
+from winnow.pipeline.luigi.signatures import (
+    SignaturesTask,
+    ScenelessSignaturesTask,
+    SignaturesByPathListFileTask,
+)
 from winnow.utils.config import resolve_config
-from winnow.utils.files import scan_videos, scan_videos_from_txt
-from winnow.utils.logging import configure_logging_cli
 
 
 @click.command()
 @click.option("--config", "-cp", help="path to the project config file", default=os.environ.get("WINNOW_CONFIG"))
-@click.option(
-    "--list-of-files",
-    "-lof",
-    help="path to txt with a list of files for processing - overrides source folder from the config file",
-    default=None,
-)
 @click.option(
     "--frame-sampling",
     "-fs",
@@ -35,20 +32,26 @@ from winnow.utils.logging import configure_logging_cli
     default=None,
     is_flag=True,
 )
-def main(config, list_of_files, frame_sampling, save_frames):
-    logger = configure_logging_cli()
-    logger.info("Loading config file")
+@click.option(
+    "--skip_scenes",
+    "-ss",
+    help="Whether to process scenes.",
+    default=None,
+    is_flag=True,
+)
+def main(config, frame_sampling, save_frames, skip_scenes):
     config = resolve_config(config_path=config, frame_sampling=frame_sampling, save_frames=save_frames)
 
-    logger.info("Searching for Dataset Video Files")
-    if list_of_files is None:
-        videos = scan_videos(config.sources.root, "**", extensions=config.sources.extensions)
-    else:
-        videos = scan_videos_from_txt(list_of_files, extensions=config.sources.extensions)
+    logging.config.fileConfig("./logging.conf")
+    sig_task = ScenelessSignaturesTask if skip_scenes else SignaturesTask
 
-    pipeline = PipelineContext(config)
-    extract_video_signatures(files=videos, pipeline=pipeline)
-    store_database_signatures(files=videos, pipeline=pipeline)
+    luigi.build(
+        [
+            sig_task(config=config),
+        ],
+        local_scheduler=True,
+        workers=1,
+    )
 
 
 if __name__ == "__main__":

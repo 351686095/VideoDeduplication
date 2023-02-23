@@ -2,12 +2,21 @@ import itertools
 import logging
 from functools import wraps
 from time import time
-from typing import Dict
+from typing import Dict, Iterator, Tuple, Sequence
 
 from sqlalchemy import tuple_
 from sqlalchemy.orm import joinedload, aliased
 
-from db.schema import Files, Signature, Scene, VideoMetadata, Matches, Exif, TemplateMatches, Template
+from db.schema import (
+    Files,
+    Signature,
+    Scene,
+    VideoMetadata,
+    Matches,
+    Exif,
+    TemplateMatches,
+    Template,
+)
 from winnow.utils.iterators import chunks
 
 logger = logging.getLogger(__name__)
@@ -78,7 +87,13 @@ class DBResultStorage:
                 # Create missing files
                 new_files = []
                 for (path, sha256), sig_value in index.items():
-                    new_files.append(Files(file_path=path, sha256=sha256, signature=Signature(signature=sig_value)))
+                    new_files.append(
+                        Files(
+                            file_path=path,
+                            sha256=sha256,
+                            signature=Signature(signature=sig_value),
+                        )
+                    )
 
                 session.add_all(new_files)
 
@@ -137,7 +152,7 @@ class DBResultStorage:
                     session.add(file)
 
     @benchmark
-    def add_scenes(self, entries, override=False):
+    def add_scenes(self, entries: Iterator[Tuple[str, str, Sequence[float]]], override=False):
         """Bulk add scenes.
 
         Args:
@@ -164,7 +179,7 @@ class DBResultStorage:
                     if len(file.scenes) > 0:
                         continue
 
-                    # Otherwise write scenes
+                    # Otherwise, write scenes
                     file.scenes = self._create_scenes(file, durations)
 
                 # Create missing files
@@ -245,7 +260,14 @@ class DBResultStorage:
                 for match in matches:
                     source = match.query_video_file
                     target = match.match_video_file
-                    distance = index.pop((source.file_path, source.sha256, target.file_path, target.sha256))
+                    distance = index.pop(
+                        (
+                            source.file_path,
+                            source.sha256,
+                            target.file_path,
+                            target.sha256,
+                        )
+                    )
                     match.distance = distance
 
                 # Collect files for missing matches
@@ -258,7 +280,11 @@ class DBResultStorage:
                 for (path_1, sha256_1, path_2, sha256_2), distance in index.items():
                     query_file = file_index[(path_1, sha256_1)]
                     match_file = file_index[(path_2, sha256_2)]
-                    new_match = Matches(query_video_file=query_file, match_video_file=match_file, distance=distance)
+                    new_match = Matches(
+                        query_video_file=query_file,
+                        match_video_file=match_file,
+                        distance=distance,
+                    )
                     new_matches.append(new_match)
                 session.add_all(new_matches)
 
@@ -282,7 +308,7 @@ class DBResultStorage:
             session.add(exif_entity)
 
     @benchmark
-    def add_exifs(self, entries):
+    def add_exifs(self, entries: Iterator[Tuple[str, str, Dict]]):
         """Add metadata to multiple files.
 
         Args:
@@ -415,9 +441,12 @@ class DBResultStorage:
         query_file = aliased(Files)
         match_file = aliased(Files)
 
-        tuple_filter = tuple_(query_file.file_path, query_file.sha256, match_file.file_path, match_file.sha256).in_(
-            file_identifiers
-        )
+        tuple_filter = tuple_(
+            query_file.file_path,
+            query_file.sha256,
+            match_file.file_path,
+            match_file.sha256,
+        ).in_(file_identifiers)
 
         return (
             session.query(Matches)

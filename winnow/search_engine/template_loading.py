@@ -3,7 +3,7 @@ import os
 import pickle
 import tempfile
 from pathlib import Path
-from typing import List
+from typing import List, Collection
 
 import numpy as np
 from sqlalchemy.orm import eagerload
@@ -24,7 +24,7 @@ class TemplateLoader:
     def __init__(
         self,
         pretrained_model: CNN_tf,
-        extensions: List[str] = TemplatesConfig.extensions,
+        extensions: Collection[str] = TemplatesConfig.extensions,
         image_size: int = 224,
     ):
         """Create template loader."""
@@ -32,7 +32,7 @@ class TemplateLoader:
         self._pretrained_model = pretrained_model
         self._extensions = extensions
 
-    def load_template_from_folder(self, path: str, extensions: List[str] = None) -> Template:
+    def load_template_from_folder(self, path: str, extensions: Collection[str] = None) -> Template:
         """Load single template from folder.
 
         Template name is equal to the folder name. Template examples are
@@ -162,7 +162,12 @@ class TemplateLoader:
 
         with tempfile.TemporaryDirectory(prefix="frame-folder-") as directory:
             frame_path = os.path.join(directory, "frame.jpg")
-            extract_frame(source_path=frame.path, destination=frame_path, position=frame.time, width=self._image_size)
+            extract_frame(
+                source_path=frame.path,
+                destination=frame_path,
+                position=frame.time,
+                width=self._image_size,
+            )
             resized_images = np.array([load_image(frame_path, self._image_size)])
             features = self._pretrained_model.extract(resized_images, batch_sz=10)
 
@@ -210,7 +215,7 @@ class TemplateLoader:
             examples=template_examples,
         )
 
-    def _image_paths(self, template_folder: str, extensions: List[str]) -> List[str]:
+    def _image_paths(self, template_folder: str, extensions: Collection[str]) -> Collection[str]:
         """Get paths of images located at the root of the given folder."""
         results = []
         extensions = {f".{ext}" for ext in extensions}

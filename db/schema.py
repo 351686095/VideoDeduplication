@@ -277,6 +277,12 @@ class Repository(Base):
     network_address = Column(String, nullable=False)
     # Account id or username which we use to access the repository
     account_id = Column(String, nullable=False)
+    # Optional total fingerprint count
+    total_fingerprint_count = Column(Integer, nullable=False, default=0)
+    # Optional pushed fingerprint count
+    pushed_fingerprint_count = Column(Integer, nullable=False, default=0)
+    # Last synchronization time
+    last_sync = Column(DateTime, nullable=True)
 
     # Relationships
 
@@ -293,6 +299,8 @@ class Contributor(Base):
     name = Column(String, nullable=False)
     # A repository from which this contributor is known
     repository_id = Column(Integer, ForeignKey("repositories.id"), nullable=False)
+    # Optional total count of fingerprints
+    fingerprints_count = Column(Integer, nullable=False, default=0)
 
     # Relationships
 
@@ -310,3 +318,23 @@ class FileFilterPreset(Base):
     name = Column(String(100), nullable=False, unique=True)
     # Any filter data as JSON blob
     filters = Column(JSON, nullable=False)
+
+
+class TaskLogRecord(Base):
+    """Task execution log.
+
+    Motivation
+    ----------
+    Sometimes there is no way to determine whether the task is already completed just by looking
+    at the results alone. For example if template-matching is performed and no matches was found
+    there will be zero ``TemplateMatches`` in the database. So the results before and after the
+    run will be identical. Thus, some indication that the task was successfully executed is
+    needed. ``TaskLogRecord`` fills this gap.
+    """
+
+    __tablename__ = "task_logs"
+
+    id = Column(Integer, primary_key=True)
+    task_name = Column(String(100), nullable=False, unique=False)
+    timestamp = Column(DateTime, nullable=False)
+    details = Column(JSON)

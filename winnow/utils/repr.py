@@ -1,37 +1,21 @@
 """The repr module offers high-level utility functions to work with intermediate representations."""
 import logging
 from os import PathLike
-from typing import Callable
+from typing import Callable, Union
 
-from winnow.config import Config
 from winnow.config.config import StorageType
 from winnow.storage.base_repr_storage import ReprStorageFactory
 from winnow.storage.file_key import FileKey
 from winnow.storage.legacy import LMDBReprStorage, SQLiteReprStorage
 from winnow.storage.legacy.wrapper import LegacyStorageWrapper
-from winnow.storage.repr_utils import path_resolver
+from winnow.storage.no_hash_repr_storage import NoHashReprStorage
 from winnow.storage.simple_repr_storage import SimpleReprStorage
-from winnow.utils.files import get_hash
 
 # Default logger module
 logger = logging.getLogger(__name__)
 
-
-def filekey_resolver(config: Config) -> Callable[[str], FileKey]:
-    """Create a function to generate video FileKey(storage-path, hash) from the path.
-
-    Args:
-        config (Config): Pipeline configuration.
-    """
-    storepath = path_resolver(config.sources.root)
-
-    def filekey(path: PathLike, hash: str = None) -> FileKey:
-        """Convert path and optional hash to the FileKey. Caclulate missing hashes."""
-        if hash is None:
-            hash = get_hash(path, config.repr.hash_mode)
-        return FileKey(path=storepath(path), hash=hash)
-
-    return filekey
+# Type hint for FileKey-resolver function
+FileKeyResolver = Callable[[Union[str, PathLike]], FileKey]
 
 
 def repr_storage_factory(
@@ -40,20 +24,23 @@ def repr_storage_factory(
 ) -> ReprStorageFactory:
     """Get storage factory depending on the storage type from the config."""
 
-    def detect_storage(directory):
+    def detect_storage(directory, *args, **kwargs):
         """Detect existing storage."""
         if LMDBReprStorage.is_storage(directory):
             logger.info("Detected LMDB repr-storage in %s", directory)
-            return LegacyStorageWrapper(LMDBReprStorage(directory))
+            return LegacyStorageWrapper(LMDBReprStorage(directory, *args, **kwargs))
         elif SQLiteReprStorage.is_storage(directory):
             logger.info("Detected SQLite repr-storage in %s", directory)
-            return LegacyStorageWrapper(SQLiteReprStorage(directory))
+            return LegacyStorageWrapper(SQLiteReprStorage(directory, *args, **kwargs))
         elif SimpleReprStorage.is_storage(directory):
             logger.info("Detected simple path-based repr-storage in %s", directory)
-            return SimpleReprStorage(directory)
+            return SimpleReprStorage(directory, *args, **kwargs)
         else:
-            logger.info("Cannot detect storage type in %s. Using default factory instead.", directory)
-            return default_factory(directory)
+            logger.info(
+                "Cannot detect storage type in %s. Using default factory instead.",
+                directory,
+            )
+            return default_factory(directory, *args, **kwargs)
 
     if storage_type is StorageType.SIMPLE:
         return SimpleReprStorage
@@ -61,6 +48,8 @@ def repr_storage_factory(
         return LegacyStorageWrapper.factory(LMDBReprStorage)
     elif storage_type is StorageType.SQLITE:
         return LegacyStorageWrapper.factory(SQLiteReprStorage)
+    elif storage_type is StorageType.NOHASH:
+        return NoHashReprStorage
     elif storage_type is StorageType.DETECT or storage_type is None:
         return detect_storage
     else:

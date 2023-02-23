@@ -88,7 +88,10 @@ class SQLiteReprStorage(LegacyReprStorage):
             save (Function): Function to write representation value to the file.
             load (Function): Function to load representation value from file.
         """
-        logger.warning("Legacy SQLiteReprStorage is deprecated. Use SimpleReprStorage instead.", DeprecationWarning)
+        logger.warning(
+            "Legacy SQLiteReprStorage is deprecated. Use SimpleReprStorage instead.",
+            DeprecationWarning,
+        )
         self.directory = os.path.abspath(directory)
         self._save = save
         self._load = load
@@ -103,7 +106,7 @@ class SQLiteReprStorage(LegacyReprStorage):
         manifest_file.ensure(self.MANIFEST)
 
         self.db_file = os.path.join(self.directory, self.DB_FILE_NAME)
-        self.database = Database(f"sqlite:///{self.db_file}", base=Base)
+        self.database = Database.from_uri(f"sqlite:///{self.db_file}", base=Base)
         self.database.create_tables()
 
     def exists(self, key: ReprKey, check_tag: bool = True):

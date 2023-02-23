@@ -1,14 +1,16 @@
 import cv2
 import numpy as np
+import logging
 
 
-def load_video(video, desired_size, frame_sampling):
+def load_video(video, desired_size, frame_sampling) -> np.ndarray:
     """
           Function that loads a video and converts it to the desired size.
 
           Args:
             video: path to video
             desired_size: desired shape of each frame
+            frame_sampling:
 
           Returns:
             video_tensor: the tensor of the given video
@@ -45,6 +47,7 @@ def load_video(video, desired_size, frame_sampling):
             else:
                 break
             count += 1
+        logging.debug(f"Video '{video}' processed with {len(frames)} of {count} frames.")
         cap.release()
         video_tensor = np.array(frames)
 

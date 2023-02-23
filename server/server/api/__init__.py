@@ -15,6 +15,12 @@ from . import (  # noqa: F401
     template_matches,
     file_filter_presets,
     template_file_exclusions,
+    repositories,
+    contributors,
+    online,
+    processing,
+    health,
+    embeddings,
 )
 from .blueprint import api
 

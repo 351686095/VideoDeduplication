@@ -1,4 +1,6 @@
 from os.path import join, abspath
+import xml.etree.ElementTree as ET
+import pickle
 
 from winnow.storage.simple_repr_storage import SimpleReprStorage
 
@@ -12,11 +14,12 @@ class ReprStorage:
         Args:
             directory (String): Directory in which all representations will be stored.
         """
+        kwargs = {}
+        kwargs["save"] = save_func
+        kwargs["load"] = load_func
+        kwargs["repr_suffix"] = "_data.xml"
         self.directory = abspath(directory)
-        self.frames = storage_factory(join(self.directory, "frames"))
-        self.frame_level = storage_factory(join(self.directory, "frame_level"))
-        self.scene_level = storage_factory(join(self.directory, "scene_level"))
-        self.video_level = storage_factory(join(self.directory, "video_level"))
+        self.features = storage_factory(join(self.directory, "features"), **kwargs)
         self.signature = storage_factory(join(self.directory, "video_signatures"))
         self.scene_signature = storage_factory(join(self.directory, "scene_signatures"))
 
@@ -25,9 +28,23 @@ class ReprStorage:
 
     def close(self):
         """Release any underlying resources (close database connections, etc.)."""
-        self.frames.close()
-        self.frame_level.close()
-        self.scene_level.close()
-        self.video_level.close()
+        self.features.close()
         self.signature.close()
         self.scene_signature.close()
+
+
+def save_func(file, value):
+    root = ET.Element("root")
+    for key, val in value.items():
+        ET.SubElement(root, key, {"data": pickle.dumps(val).hex()})
+    tree = ET.ElementTree(root)
+    tree.write(file)
+
+
+def load_func(path):
+    tree = ET.parse(path)
+    root = tree.getroot()
+    ret_val = {}
+    for child in root:
+        ret_val[child.tag] = pickle.loads(bytes.fromhex(child.attrib["data"]))
+    return ret_val

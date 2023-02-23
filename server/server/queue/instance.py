@@ -5,6 +5,11 @@ from server.queue.model import (
     MatchTemplates,
     FindFrame,
     ProcessOnlineVideo,
+    PushFingerprints,
+    PullFingerprints,
+    MatchRemoteFingerprints,
+    PrepareSemanticSearch,
+    GenerateTiles,
 )
 from server.queue.request_transformer import RequestTransformer
 
@@ -15,4 +20,9 @@ request_transformer = RequestTransformer(
     MatchTemplates,
     FindFrame,
     ProcessOnlineVideo,
+    PushFingerprints,
+    PullFingerprints,
+    MatchRemoteFingerprints,
+    PrepareSemanticSearch,
+    GenerateTiles,
 )
