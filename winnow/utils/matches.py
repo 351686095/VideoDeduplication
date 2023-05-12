@@ -24,7 +24,7 @@ def get_summarized_matches(video_signatures, new_signatures=[], distance=0.75, m
         return None
 
     neighbors = 20
-    nn = AnnoyNNeighbors(n_neighbors=neighbors, metric=metric)
+    nn = AnnoyNNeighbors(n_neighbors=neighbors, metric=metric, feature_size=video_signatures.shape[1])
     nn.fit(video_signatures)
 
     distances, indices = nn.kneighbors(new_signatures)

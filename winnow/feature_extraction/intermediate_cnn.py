@@ -6,7 +6,7 @@ from .extraction_routine import (
     OnExtractedCallback,
 )
 from .model import default_model_path
-from .model_tf import CNN_tf
+from .model_pt import CNN_pt
 from ..utils.multiproc import multiprocessing as mp
 
 
@@ -17,7 +17,7 @@ class IntermediateCnnExtractor:
         on_extracted: OnExtractedCallback,
         video_ids: Collection[Any] = None,
         frame_sampling: int = 1,
-        model: Optional[CNN_tf] = None,
+        model: Optional[CNN_pt] = None,
     ):
         """
         Args:

@@ -25,6 +25,7 @@ class VideoProcessingTask(PipelineTask):
     """Extract __?__ for files with prefix."""
 
     prefix: str = luigi.Parameter(default=".")
+    batch_size: int = luigi.Parameter(default=512)
 
     def output(self) -> PrefixFeatureTarget:
         return PrefixFeatureTarget(
@@ -48,23 +49,16 @@ class VideoProcessingTask(PipelineTask):
             pipeline=self.pipeline,
             progress=self.progress,
             logger=self.logger,
+            batch_size=self.batch_size
         )
 
 
 def process_features(file_key: FileKey, frames_features: np.ndarray):
-    logging.debug("detecting scenes")
-    scene_data, scene_features = detect_scenes(frames_features)
-    logging.debug("aggregating scenes")
-    scene_features = [global_vector(feats) for feats in scene_features]
-    scene_features = np.reshape(np.array(scene_features), (len(scene_features), -1))
-    logging.debug("aggregating video")
-    video_features = global_vector(frames_features)
-    video_features = np.reshape(np.array(video_features), (1, -1))
-    logging.debug("outputting data")
     data = {}
-    data["scene_data"] = scene_data
-    data["scene_features"] = scene_features
-    data["video_features"] = video_features
+    data["scene_data"] = None
+    data["scene_features"] = None
+    frames_features = np.reshape(frames_features, (1, -1))
+    data["video_features"] = frames_features
     return data
 
 
@@ -73,6 +67,7 @@ def extract_frame_level_features(
     pipeline: PipelineContext,
     progress: BaseProgressMonitor = ProgressMonitor.NULL,
     logger: logging.Logger = logging.getLogger(__name__),
+    batch_size: int = 256,
 ):
     """Extract frame-level features from dataset videos."""
 
@@ -102,6 +97,6 @@ def extract_frame_level_features(
     )
 
     logger.info("Extracting features.")
-    extractor.extract_features(batch_size=16, cores=multiprocessing.cpu_count())
+    extractor.extract_features(batch_size=batch_size, cores=multiprocessing.cpu_count())
     logger.info("Done feature extraction.")
     progress.complete()

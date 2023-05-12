@@ -6,24 +6,34 @@ from typing import Callable, Any, Collection, Tuple
 import numpy as np
 import tensorflow as tf
 from tqdm import tqdm
+import torch
 
 from winnow.utils.multiproc import multiprocessing as mp
-from .model_tf import CNN_tf
+from .model_pt import CNN_pt
 from .utils import load_video
 
 os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
 
-def process_video(task: Tuple[str, Any, Any, int, int]) -> Tuple[Any, np.ndarray]:
+def process_videos(tasks: Collection) -> Collection:
+    """Process a batch of images.
+
+    Takes a list of tuple (video_path, video_id, model, frame_sampling, batch_size).
+    Returns a list of tuple (video_id, frames_tensor, frame_features)
+    """
+    return [process_video(task) for task in tasks]
+
+
+def process_video(task: Tuple[str, Any, int, int]) -> Tuple[Any, np.ndarray]:
     """Process a single video.
 
     Takes a tuple (video_path, video_id, model, frame_sampling, batch_size).
     Returns a tuple (video_id, frames_tensor, frame_features)
     """
     logger = logging.getLogger(f"{__name__}.process_video")
-    video_path, video_id, image_size, frame_sampling, batch_sz = task
+    video_path, video_id, frame_sampling = task
     logger.debug("Preparing frames for %s", video_path)
-    frames_tensor = load_video(video_path, image_size, frame_sampling)
+    frames_tensor = load_video(video_path, frame_sampling)
     logger.debug("Done preparing frames for %s", video_path)
     return video_id, frames_tensor
 
@@ -62,33 +72,38 @@ def feature_extraction_videos(
     logger.info("CPU cores: %s", cores)
     logger.info("Batch size: %s", batch_sz)
     logger.info("Starting Feature Extraction Process")
-    logger.info("GPU is available: %s", tf.test.is_gpu_available())
+    logger.info("GPU is available: %s", torch.cuda.is_available())
 
-    tasks = zip(
+    tasks = list(zip(
         video_paths,
         video_ids,
-        repeat(model.desired_size, file_count),
         repeat(frame_sampling, file_count),
-        repeat(batch_sz, file_count),
-    )
-    # Chunk tasks into as close as possible to 10,000 chunks, but with chunksize bounded [1, 10] (inclusive)
-    chunksize = max(min(len(video_paths) // 10000, 10), 1)
+    ))
+    batches = [tasks[i*batch_sz:(i+1)*batch_sz] for i in range(len(tasks)//batch_sz + 1)]
 
-    progress_bar = iter(tqdm(range(file_count), mininterval=1.0, unit="video"))
-    semaphore = mp.Semaphore(cores)
+    with torch.no_grad():
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        model.to(device)
 
-    # Semaphore pattern used below from https://stackoverflow.com/questions/30448267/multiprocessing-pool-imap-unordered-with-fixed-queue-size-or-buffer
-    with mp.Pool(cores) as pool:
-        for video_id, frame_tensor in pool.imap_unordered(
-            process_video, semaphore_producer(semaphore, tasks), chunksize=chunksize
-        ):
-            logger.debug("Extracting features for %s", video_id)
-            frame_features = model.extract(frame_tensor, batch_sz)
-            logger.debug("Extracted, processing")
-            on_extracted(video_id, frame_features)
-            logger.debug("Processed.")
-            next(progress_bar)
-            semaphore.release()
+        progress_bar = iter(tqdm(range(file_count), mininterval=1.0, unit="image"))
+        semaphore = mp.Semaphore(cores)
+        try:
+            #with mp.Pool(cores) as pool:
+                #for batch in pool.imap_unordered(process_videos, semaphore_producer(semaphore, batches)):
+            for batch in batches:
+                ids, images = zip(*process_videos(batch))
+                batch_data = torch.stack(images, dim=0)
+                logger.debug(f"Extracting features for {len(ids)} files.")
+                batch_features = model.extract(batch_data.to(device)).cpu().numpy()
+                logger.debug("Extracted, processing")
+                for image_id, image_features in zip(ids, [batch_features[i] for i in range(batch_features.shape[0])]):
+                    on_extracted(image_id, image_features)
+                    next(progress_bar)
+                logger.debug("Processed.")
+                semaphore.release()
+        except Exception as e:
+            logger.error(f"{e}")
+            raise e
 
 
 def semaphore_producer(semaphore: mp.Semaphore, tasks: Collection[tuple]):
@@ -99,6 +114,6 @@ def semaphore_producer(semaphore: mp.Semaphore, tasks: Collection[tuple]):
         yield task
 
 
-def load_featurizer(pretrained_local_path) -> CNN_tf:
+def load_featurizer(pretrained_local_path) -> CNN_pt:
     """Load pretrained model."""
-    return CNN_tf("vgg", pretrained_local_path)
+    return CNN_pt("vgg", pretrained_local_path)
