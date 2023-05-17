@@ -6,7 +6,7 @@ import pandas as pd
 from dataclasses import asdict
 
 from winnow.pipeline.luigi.frame_features import FrameFeaturesTask
-from winnow.pipeline.luigi.platform import PipelineTask, ConstTarget
+from winnow.pipeline.luigi.platform_winnow import PipelineTask, ConstTarget
 from winnow.pipeline.luigi.targets import FileWithTimestampTarget, TaskLogRecordTarget
 from winnow.pipeline.luigi.utils import ScenesDF
 from winnow.utils.scene_detection import extract_scenes

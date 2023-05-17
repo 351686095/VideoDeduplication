@@ -1,34 +1,20 @@
 import datetime
 import logging
-from typing import List, Sequence
-
-import matplotlib.pyplot as plt
 import numpy as np
-from dataclasses import dataclass
-from scipy.spatial.distance import cosine
-from tqdm import tqdm
 
-from winnow.pipeline.progress_monitor import BaseProgressMonitor, ProgressMonitor
-from winnow.storage.base_repr_storage import BaseReprStorage
-from winnow.storage.file_key import FileKey
 from winnow.utils.scene_detection import get_duration, seconds_to_time, cosine_series
 
 logger = logging.getLogger(__name__)
 
 
-def detect_scenes(
-    frame_level_features,
-    minimum_duration=1,
-    upper_thresh: float = 0.793878,
-    min_dif: float = 0.04
-):
+def detect_scenes(frame_level_features, minimum_duration=1, upper_thresh: float = 0.793878, min_dif: float = 0.04):
     if frame_level_features.shape[0] > minimum_duration:
         logging.debug("Extracting difference info")
         diffs = cosine_series(frame_level_features)
         logging.debug("Identifying scene markers")
         scene_ident = (diffs > np.quantile(diffs, upper_thresh)) & (diffs > min_dif)
         idxs = np.array(list(range(len(scene_ident))))[scene_ident]
-        idxs = [0] + [(i+1) for i in idxs]
+        idxs = [0] + [(i + 1) for i in idxs]
         if (len(frame_level_features)) not in idxs:
             idxs = list(idxs) + [len(frame_level_features)]
         else:

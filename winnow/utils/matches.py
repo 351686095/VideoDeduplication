@@ -1,8 +1,8 @@
 """The matches module offers high-level operations with matches."""
 import pandas as pd
-import numpy as np
 from ..duplicate_detection.annoy_neighbors import AnnoyNNeighbors
 import logging
+
 
 def unique(row):
     return "".join([str(x) for x in sorted([row["query"], row["match"]])])

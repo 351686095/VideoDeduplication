@@ -4,21 +4,15 @@ from typing import Collection
 
 import luigi
 import numpy as np
-import tensorflow as tf
 
 from winnow.feature_extraction import IntermediateCnnExtractor
 from winnow.pipeline.luigi.targets import (
     PrefixFeatureTarget,
-    PathListFileFeatureTarget,
-    PathListFeatureTarget,
 )
-from winnow.pipeline.luigi.platform import PipelineTask
+from winnow.pipeline.luigi.platform_winnow import PipelineTask
 from winnow.pipeline.pipeline_context import PipelineContext
 from winnow.pipeline.progress_monitor import ProgressMonitor, BaseProgressMonitor
 from winnow.storage.file_key import FileKey
-from winnow.feature_extraction.loading_utils import global_vector
-
-from winnow.utils.scene_extraction import detect_scenes
 
 
 class VideoProcessingTask(PipelineTask):
@@ -42,14 +36,12 @@ class VideoProcessingTask(PipelineTask):
             self.prefix,
         )
 
-        tf.compat.v1.reset_default_graph()
-
         extract_frame_level_features(
             file_keys=target.remaining_keys,
             pipeline=self.pipeline,
             progress=self.progress,
             logger=self.logger,
-            batch_size=self.batch_size
+            batch_size=self.batch_size,
         )
 
 

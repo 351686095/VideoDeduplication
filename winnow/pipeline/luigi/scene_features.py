@@ -9,17 +9,13 @@ import luigi
 
 from winnow.feature_extraction.loading_utils import global_vector
 from winnow.pipeline.luigi.targets import (
-    PathListFeatureTarget,
-    PathListFileFeatureTarget,
     PrefixFeatureTarget,
 )
 from winnow.pipeline.luigi.scenes import ScenesReportTask
 from winnow.pipeline.luigi.frame_features import (
-    FrameFeaturesByPathListTask,
-    FrameFeaturesByPathListFileTask,
     FrameFeaturesTask,
 )
-from winnow.pipeline.luigi.platform import PipelineTask
+from winnow.pipeline.luigi.platform_winnow import PipelineTask
 from winnow.pipeline.pipeline_context import PipelineContext
 from winnow.pipeline.progress_monitor import ProgressMonitor, BaseProgressMonitor
 from winnow.storage.file_key import FileKey

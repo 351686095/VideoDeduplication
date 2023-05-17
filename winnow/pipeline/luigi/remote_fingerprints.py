@@ -3,7 +3,7 @@ from cached_property import cached_property
 
 from remote import make_client
 from remote.connect import RemoteConnector
-from winnow.pipeline.luigi.platform import PipelineTask, CheckTarget
+from winnow.pipeline.luigi.platform_winnow import PipelineTask, CheckTarget
 
 
 class PushFingerprintsTask(PipelineTask):

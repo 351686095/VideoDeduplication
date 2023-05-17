@@ -21,7 +21,7 @@ from winnow.pipeline.luigi.condense import (
     CondenseFingerprintsTask,
     CondensedFingerprints,
 )
-from winnow.pipeline.luigi.platform import PipelineTask, ConstTarget
+from winnow.pipeline.luigi.platform_winnow import PipelineTask, ConstTarget
 from winnow.pipeline.luigi.signatures import SignaturesByPathListFileTask
 from winnow.pipeline.luigi.targets import FileGroupTarget
 from winnow.pipeline.luigi.utils import MatchesDF

@@ -15,7 +15,7 @@ from db import Database
 from db.schema import TemplateFileExclusion, TemplateMatches, TaskLogRecord
 from winnow.collection.file_collection import FileCollection
 from winnow.pipeline.luigi.frame_features import FrameFeaturesTask
-from winnow.pipeline.luigi.platform import PipelineTask, ConstTarget
+from winnow.pipeline.luigi.platform_winnow import PipelineTask, ConstTarget
 from winnow.pipeline.luigi.targets import FileGroupTarget
 from winnow.pipeline.progress_monitor import BaseProgressMonitor, ProgressMonitor
 from winnow.search_engine import BlackList, SearchEngine

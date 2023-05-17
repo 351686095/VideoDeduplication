@@ -11,7 +11,7 @@ from winnow.pipeline.luigi.embeddings import (
     TriMapEmbeddingsTask,
     PaCMAPEmbeddingsTask,
 )
-from winnow.pipeline.luigi.platform import PipelineTask
+from winnow.pipeline.luigi.platform_winnow import PipelineTask
 from winnow.pipeline.luigi.targets import FileGroupTarget
 
 

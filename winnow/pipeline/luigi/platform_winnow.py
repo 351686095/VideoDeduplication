@@ -1,8 +1,8 @@
 import logging
 import logging.config
 from typing import Callable, Any
+import luigi
 
-import luigi.setup_logging
 from cached_property import cached_property
 from dataclasses import dataclass
 

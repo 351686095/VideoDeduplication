@@ -11,7 +11,7 @@ from winnow.pipeline.luigi.condense import (
     CondensedFingerprints,
     CondensedFingerprintsTarget,
 )
-from winnow.pipeline.luigi.platform import PipelineTask
+from winnow.pipeline.luigi.platform_winnow import PipelineTask
 from winnow.pipeline.luigi.targets import FileGroupTarget
 from winnow.pipeline.progress_monitor import ProgressBar, LazyProgress
 from winnow.text_search.similarity_index import AnnoySimilarityIndex

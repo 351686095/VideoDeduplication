@@ -9,7 +9,7 @@ from sqlalchemy import tuple_
 
 from db.schema import Files
 from winnow.pipeline.luigi.frame_features import FrameFeaturesTask
-from winnow.pipeline.luigi.platform import PipelineTask
+from winnow.pipeline.luigi.platform_winnow import PipelineTask
 from winnow.search_engine import SearchEngine, BlackList
 from winnow.search_engine.model import Frame, Template
 from winnow.utils.iterators import chunks

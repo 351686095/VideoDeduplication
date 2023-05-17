@@ -6,7 +6,7 @@ import luigi
 import pandas as pd
 from cached_property import cached_property
 
-from winnow.pipeline.luigi.platform import PipelineTask, ConstTarget
+from winnow.pipeline.luigi.platform_winnow import PipelineTask, ConstTarget
 from winnow.pipeline.luigi.targets import FileWithTimestampTarget, TaskLogRecordTarget
 from winnow.pipeline.pipeline_context import PipelineContext
 from winnow.pipeline.progress_monitor import ProgressMonitor, BaseProgressMonitor

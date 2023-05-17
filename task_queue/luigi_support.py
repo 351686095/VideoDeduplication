@@ -6,7 +6,7 @@ import luigi
 
 from task_queue.metadata import TaskRuntimeMetadata
 from task_queue.winnow_task import WinnowTask
-from winnow.pipeline.luigi.platform import JusticeAITask
+from winnow.pipeline.luigi.platform_winnow import JusticeAITask
 from winnow.pipeline.progress_monitor import ProgressMonitor
 
 

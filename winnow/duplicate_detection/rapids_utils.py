@@ -1,7 +1,5 @@
 import numpy as np
 from tqdm import tqdm
-from pprint import pprint
-from cuml.cluster import HDBSCAN
 from cuml.metrics import pairwise_distances
 from collections import Counter
 

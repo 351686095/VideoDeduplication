@@ -18,7 +18,7 @@ from winnow.pipeline.luigi.embeddings import (
     PaCMAPEmbeddingsTask,
 )
 from winnow.pipeline.luigi.embeddings_image import LabeledEmbeddingsImageTask
-from winnow.pipeline.luigi.platform import PipelineTask
+from winnow.pipeline.luigi.platform_winnow import PipelineTask
 from winnow.pipeline.luigi.utils import FileKeyDF
 
 

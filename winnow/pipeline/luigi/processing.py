@@ -2,7 +2,7 @@ import luigi
 
 from winnow.pipeline.luigi.exif import ExifTask
 from winnow.pipeline.luigi.matches import DBMatchesTask
-from winnow.pipeline.luigi.platform import PipelineTask
+from winnow.pipeline.luigi.platform_winnow import PipelineTask
 
 
 class ProcessFilesTask(PipelineTask):

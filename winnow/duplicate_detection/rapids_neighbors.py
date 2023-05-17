@@ -1,18 +1,11 @@
-from tqdm import tqdm
-from pprint import pprint
 from cuml.cluster import HDBSCAN
-from cuml.metrics import pairwise_distances
-from collections import Counter
 from typing import Sequence
 
 import numpy as np
-from annoy import AnnoyIndex
 
 from winnow.pipeline.progress_monitor import BaseProgressMonitor, ProgressMonitor
 from .rapids_utils import (
     get_relevant_information,
-    get_distance_matrix_cluster,
-    get_unique_files,
     get_distances_and_indices,
 )
 

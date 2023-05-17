@@ -18,7 +18,7 @@ from winnow.pipeline.luigi.embeddings import (
     UmapEmbeddingsTask,
     TriMapEmbeddingsTask,
 )
-from winnow.pipeline.luigi.platform import PipelineTask
+from winnow.pipeline.luigi.platform_winnow import PipelineTask
 from winnow.pipeline.luigi.targets import FileWithTimestampTarget
 from winnow.pipeline.progress_monitor import BaseProgressMonitor, ProgressMonitor
 

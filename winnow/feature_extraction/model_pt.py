@@ -1,7 +1,4 @@
-
-import numpy as np
 import warnings
-import logging
 
 with warnings.catch_warnings():
     warnings.filterwarnings("ignore")
@@ -42,6 +39,3 @@ class CNN_pt:
         """
         with torch.no_grad():
             return self.model(inputs)
-
-
-

@@ -1,5 +1,4 @@
 import os
-import pickle
 import sys
 from functools import partial
 from glob import glob

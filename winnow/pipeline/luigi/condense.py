@@ -13,7 +13,7 @@ from dataclasses import asdict, astuple, dataclass
 
 from winnow.collection.file_collection import FileCollection
 from winnow.duplicate_detection.neighbors import FeatureVector
-from winnow.pipeline.luigi.platform import PipelineTask
+from winnow.pipeline.luigi.platform_winnow import PipelineTask
 from winnow.pipeline.luigi.signatures import SignaturesTask
 from winnow.pipeline.luigi.targets import FileGroupTarget
 from winnow.pipeline.luigi.utils import FileKeyDF
@@ -215,7 +215,7 @@ class CondensedFingerprintsTarget(FileGroupTarget):
         """Save condensed fingerprints."""
         fingerprints_path, keys_path = self.suggest_paths(time)
         fingerprints_target = luigi.LocalTarget(fingerprints_path, format=luigi.format.Nop)
-        keys_target = luigi.LocalTarget(keys_path)
+        # keys_target = luigi.LocalTarget(keys_path)
         with fingerprints_target.open("w") as fingerprints_out:
             np.save(fingerprints_out, condensed.fingerprints)
             condensed.file_keys_df.to_csv(keys_path)

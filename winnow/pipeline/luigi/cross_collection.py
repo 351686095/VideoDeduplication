@@ -20,7 +20,7 @@ from winnow.pipeline.luigi.condense import (
 )
 from winnow.pipeline.luigi.match_graph import MatchGraphBuilder
 from winnow.pipeline.luigi.matches import MatchesReportTask
-from winnow.pipeline.luigi.platform import PipelineTask
+from winnow.pipeline.luigi.platform_winnow import PipelineTask
 from winnow.pipeline.luigi.utils import prefix, MatchesDF
 from winnow.pipeline.progress_monitor import (
     ProgressBar,

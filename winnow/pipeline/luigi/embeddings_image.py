@@ -27,7 +27,7 @@ from winnow.pipeline.luigi.embeddings import (
     PaCMAPEmbeddingsTask,
     TSNEEmbeddingsTask,
 )
-from winnow.pipeline.luigi.platform import PipelineTask
+from winnow.pipeline.luigi.platform_winnow import PipelineTask
 from winnow.pipeline.progress_monitor import ProgressMonitor, BaseProgressMonitor
 
 

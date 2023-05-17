@@ -5,7 +5,7 @@ from glob import glob
 
 import luigi
 
-from winnow.pipeline.luigi.platform import JusticeAITask
+from winnow.pipeline.luigi.platform_winnow import JusticeAITask
 from winnow.pipeline.progress_monitor import (
     ProgressMonitor,
     LazyProgress,

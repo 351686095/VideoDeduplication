@@ -11,7 +11,7 @@ import pandas as pd
 from dataclasses import astuple
 
 from winnow.collection.file_collection import FileCollection
-from winnow.pipeline.luigi.platform import Match
+from winnow.pipeline.luigi.platform_winnow import Match
 from winnow.pipeline.progress_monitor import (
     ProgressMonitor,
     LazyProgress,

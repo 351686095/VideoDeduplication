@@ -4,7 +4,6 @@ from itertools import repeat
 from typing import Callable, Any, Collection, Tuple
 
 import numpy as np
-import tensorflow as tf
 from tqdm import tqdm
 import torch
 
@@ -74,12 +73,14 @@ def feature_extraction_videos(
     logger.info("Starting Feature Extraction Process")
     logger.info("GPU is available: %s", torch.cuda.is_available())
 
-    tasks = list(zip(
-        video_paths,
-        video_ids,
-        repeat(frame_sampling, file_count),
-    ))
-    batches = [tasks[i*batch_sz:(i+1)*batch_sz] for i in range(len(tasks)//batch_sz + 1)]
+    tasks = list(
+        zip(
+            video_paths,
+            video_ids,
+            repeat(frame_sampling, file_count),
+        )
+    )
+    batches = [tasks[i * batch_sz : (i + 1) * batch_sz] for i in range(len(tasks) // batch_sz + 1)]
 
     with torch.no_grad():
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -88,8 +89,8 @@ def feature_extraction_videos(
         progress_bar = iter(tqdm(range(file_count), mininterval=1.0, unit="image"))
         semaphore = mp.Semaphore(cores)
         try:
-            #with mp.Pool(cores) as pool:
-                #for batch in pool.imap_unordered(process_videos, semaphore_producer(semaphore, batches)):
+            # with mp.Pool(cores) as pool:
+            # for batch in pool.imap_unordered(process_videos, semaphore_producer(semaphore, batches)):
             for batch in batches:
                 ids, images = zip(*process_videos(batch))
                 batch_data = torch.stack(images, dim=0)

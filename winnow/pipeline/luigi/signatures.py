@@ -1,27 +1,10 @@
 import logging
-from pickle import dumps
-from typing import Collection, Iterator
+from typing import Collection
 
 import luigi
-from cached_property import cached_property
-from dataclasses import astuple
 
-from db import Database
-from db.access.files import FilesDAO
-from winnow.feature_extraction import SimilarityModel
-from winnow.pipeline.luigi.platform import PipelineTask, ConstTarget
-from winnow.pipeline.luigi.targets import (
-    PrefixFeatureTarget,
-    PathListFeatureTarget,
-    PathListFileFeatureTarget,
-)
-from winnow.pipeline.luigi.utils import KeyIter
-from winnow.pipeline.luigi.scene_features import SceneFeaturesTask
-from winnow.pipeline.luigi.video_features import (
-    VideoFeaturesTask,
-    VideoFeaturesByPathListFileTask,
-    VideoFeaturesByPathListTask,
-)
+from winnow.pipeline.luigi.platform_winnow import PipelineTask
+from winnow.pipeline.luigi.targets import PrefixFeatureTarget
 from winnow.pipeline.luigi.xml_features import VideoProcessingTask
 from winnow.pipeline.pipeline_context import PipelineContext
 from winnow.pipeline.progress_monitor import ProgressMonitor, BaseProgressMonitor
@@ -36,11 +19,7 @@ class SignaturesTask(PipelineTask):
     feature_batch_size: int = luigi.Parameter(default=512)
 
     def requires(self):
-        yield VideoProcessingTask(
-            config=self.config,
-            prefix=self.prefix,
-            batch_size=self.feature_batch_size
-        )
+        yield VideoProcessingTask(config=self.config, prefix=self.prefix, batch_size=self.feature_batch_size)
 
     def output(self) -> PrefixFeatureTarget:
         return PrefixFeatureTarget(

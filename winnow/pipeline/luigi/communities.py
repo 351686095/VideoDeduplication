@@ -15,7 +15,7 @@ from winnow.pipeline.luigi.match_graph import (
     MatchGraphTarget,
     MatchGraph,
 )
-from winnow.pipeline.luigi.platform import PipelineTask
+from winnow.pipeline.luigi.platform_winnow import PipelineTask
 from winnow.pipeline.luigi.utils import FileKeyDF
 from winnow.pipeline.progress_monitor import (
     ProgressMonitor,
