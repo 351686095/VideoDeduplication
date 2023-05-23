@@ -16,6 +16,7 @@ sources:
     - ico
     - bmp
     - jpg
+    - jpeg
     - gif
     - tga
     - tiff
