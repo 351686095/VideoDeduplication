@@ -59,8 +59,9 @@ def get_distance_matrix_cluster(data, cluster_labels, cluster_id, dm_placeholder
 def get_unique_files(data, cluster_labels, non_cluster_id=-1, calc_dm=True, metric="euclidean"):
 
     """
-    Calculates the number of unique files as a sum of the number of unique clusters and the number of non-cluster videos.
-    Also returns the semi-calculated distance matrix for the collection (as an aggregation of distance matrixes of each cluster)
+    Calculates the number of unique files as a sum of the number of unique clusters and the
+    number of non-cluster videos. Also returns the semi-calculated distance matrix for the
+    collection (as an aggregation of distance matrixes of each cluster).
 
     """
 
@@ -93,7 +94,8 @@ def get_unique_files(data, cluster_labels, non_cluster_id=-1, calc_dm=True, metr
 
 def get_distances_and_indices(dm):
     """
-    Converts Distance matrix to a format compatible with the previous Annoy api - Assumes 0 distances are self matches and 2 were not calculated
+    Converts Distance matrix to a format compatible with the previous Annoy api - Assumes 0 distances are self matches
+    and 2 were not calculated
     """
     distances = []
     indices = []

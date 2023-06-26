@@ -89,13 +89,14 @@ def feature_extraction_videos(
     # Chunk tasks into as close as possible to 1,0000 chunks, but with chunksize bounded [1, 10] (inclusive)
     chunksize = max(min(len(tasks) // 10000, 10), 1)
 
-    # Semaphore pattern used below from https://stackoverflow.com/questions/30448267/multiprocessing-pool-imap-unordered-with-fixed-queue-size-or-buffer
+    # Semaphore pattern used below from
+    # https://stackoverflow.com/questions/30448267/multiprocessing-pool-imap-unordered-with-fixed-queue-size-or-buffer
     semaphore = mp.Semaphore(cores * chunksize)
 
     progress_bar = iter(tqdm(range(file_count), mininterval=1.0, unit=" image"))
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model.to(device)
-    try:    
+    try:
         with torch.no_grad():
             with mp.Pool(cores) as pool:
                 for batch_outputs in pool.imap_unordered(
@@ -113,7 +114,9 @@ def feature_extraction_videos(
                     logger.debug(batch_data.shape)
                     logger.debug(batch_features.shape)
                     logger.debug("Extracted, processing")
-                    for image_id, image_features in zip(ids, [batch_features[i] for i in range(batch_features.shape[0])]):
+                    for image_id, image_features in zip(
+                        ids, [batch_features[i] for i in range(batch_features.shape[0])]
+                    ):
                         logger.debug(image_id)
                         on_extracted(image_id, image_features)
                         next(progress_bar)
